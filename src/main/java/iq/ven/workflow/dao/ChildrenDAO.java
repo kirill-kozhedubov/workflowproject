@@ -1,4 +1,4 @@
 package iq.ven.workflow.dao;
 
-public class Dao {
+public interface ChildrenDAO {
 }

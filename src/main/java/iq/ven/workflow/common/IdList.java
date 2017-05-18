@@ -3,8 +3,6 @@ package iq.ven.workflow.common;
 import java.math.BigInteger;
 
 public interface IdList {
-
-
     /*  Parent types section  */
     BigInteger MOTHER = BigInteger.valueOf(1L);
     BigInteger FATHER = BigInteger.valueOf(2L);
