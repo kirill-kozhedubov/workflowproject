@@ -28,11 +28,15 @@ public class UserDaoImpl implements UserDAO {
         return null;
     }
 
-    public User createUser() {
+    public User createUser(String email, String firstName, String lastName, String password) {
         return null;
     }
 
     public boolean deleteUserById(BigInteger userId) {
+        return false;
+    }
+
+    public boolean deleteUserByEmail(String email) {
         return false;
     }
 

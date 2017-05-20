@@ -12,8 +12,9 @@ public interface UserDAO {
     User getUserByFullName(String fullName);
     User getUserByEmail(String email);// not rly good
     List<User> getAllUsers();
-    User createUser();
+    User createUser(String email, String firstName, String lastName, String password);
     boolean deleteUserById(BigInteger userId);
+    boolean deleteUserByEmail(String email);
     boolean giveUserAccessToFile(UserFile userFile, User user);
     boolean removeAccessToFileFromUser(UserFile userFile, User user);
     User authorizeUser(String email, String password);
