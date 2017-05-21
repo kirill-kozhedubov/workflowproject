@@ -145,4 +145,22 @@ public class ChildImpl implements Child {
             return new ChildImpl(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ChildImpl{" +
+                "childId=" + childId +
+                ", clarifiedInfo=" + clarifiedInfo +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", birthDate=" + birthDate +
+                ", district=" + district +
+                ", parents=" + parents +
+                ", detentionList=" + detentionList +
+                ", personalRecordCode='" + personalRecordCode + '\'' +
+                ", entranceDate=" + entranceDate +
+                ", childFiles=" + childFiles +
+                '}';
+    }
 }

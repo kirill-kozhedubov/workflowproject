@@ -83,4 +83,17 @@ public class UserImpl implements User {
         }
 
     }
+
+    @Override
+    public String toString() {
+        return "UserImpl{" +
+                "userId=" + userId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", registrationDate=" + registrationDate +
+                ", userRole=" + userRole +
+                '}';
+    }
 }

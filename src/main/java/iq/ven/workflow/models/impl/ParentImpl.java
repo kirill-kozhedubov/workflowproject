@@ -65,4 +65,15 @@ public class ParentImpl implements Parent {
             return new ParentImpl(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ParentImpl{" +
+                "parentId=" + parentId +
+                ", childId=" + childId +
+                ", parentType=" + parentType +
+                ", parentName='" + parentName + '\'' +
+                ", parentInfo='" + parentInfo + '\'' +
+                '}';
+    }
 }

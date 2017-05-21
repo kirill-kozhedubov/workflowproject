@@ -1,17 +1,19 @@
 package iq.ven.workflow.models;
 
+import iq.ven.workflow.common.IdList;
+
 import java.math.BigInteger;
 
 public enum ParentTypes {
-    MOTHER("Мать", BigInteger.valueOf(1L)),
-    FATHER("Отец", BigInteger.valueOf(2L)),
-    GRANDMOTHER("Бабушка", BigInteger.valueOf(3L)),
-    GRANDFATHER("Дедушка", BigInteger.valueOf(4L)),
-    UNCLE("Дядя", BigInteger.valueOf(5L)),
-    AUNT("Тётя", BigInteger.valueOf(6L)),
-    SISTER("Сестра", BigInteger.valueOf(17L)),
-    BROTHER("Брат", BigInteger.valueOf(8L)),
-    CUSTODIAN("Опекун", BigInteger.valueOf(9L));
+    MOTHER("Мать", IdList.MOTHER),
+    FATHER("Отец", IdList.FATHER),
+    GRANDMOTHER("Бабушка", IdList.GRANDMOTHER),
+    GRANDFATHER("Дедушка", IdList.GRANDFATHER),
+    UNCLE("Дядя", IdList.UNCLE),
+    AUNT("Тётя", IdList.AUNT),
+    SISTER("Сестра", IdList.SISTER),
+    BROTHER("Брат", IdList.BROTHER),
+    CUSTODIAN("Опекун", IdList.CUSTODIAN);
 
     private final String russianName;
     private final BigInteger dbId;
@@ -26,6 +28,11 @@ public enum ParentTypes {
     }
 
     public String getRussianName() {
+        return russianName;
+    }
+
+    @Override
+    public String toString() {
         return russianName;
     }
 }

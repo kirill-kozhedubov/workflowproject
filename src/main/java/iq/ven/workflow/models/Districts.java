@@ -1,12 +1,14 @@
 package iq.ven.workflow.models;
 
+import iq.ven.workflow.common.IdList;
+
 import java.math.BigInteger;
 
 public enum Districts {
-    MALINOVSKY("Малиновский", BigInteger.valueOf(1L)),
-    PRIMORSKY("Приморский", BigInteger.valueOf(2L)),
-    KIEVSKY("Киевский", BigInteger.valueOf(3L)),
-    SUVOROVSKY("Суворовский", BigInteger.valueOf(4L));
+    MALINOVSKY("Малиновский", IdList.MALINOVSKY),
+    PRIMORSKY("Приморский", IdList.PRIMORSKY),
+    KIEVSKY("Киевский", IdList.KIEVSKY),
+    SUVOROVSKY("Суворовский", IdList.MALINOVSKY);
 
 
     private final String russianName;
@@ -22,6 +24,11 @@ public enum Districts {
     }
 
     public String getRussianName() {
+        return russianName;
+    }
+
+    @Override
+    public String toString() {
         return russianName;
     }
 }

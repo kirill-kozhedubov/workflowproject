@@ -109,4 +109,21 @@ public class ClarifiedChildImpl implements ClarifiedChild {
         }
 
     }
+
+
+    @Override
+    public String toString() {
+        return "ClarifiedChildImpl{" +
+                "isBirthCertificatePresent=" + isBirthCertificatePresent +
+                ", clarifiedInfoId=" + clarifiedInfoId +
+                ", childId=" + childId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", birthDate=" + birthDate +
+                ", address='" + address + '\'' +
+                ", birthPlace='" + birthPlace + '\'' +
+                ", occupation='" + occupation + '\'' +
+                '}';
+    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ChildrenDAO {
 
-    Child saveChildToDb(
+    Child saveChildToDB(
             String firstName, String lastName, String middleName, Date birthDate, Districts district, String personalRecordCode, Date entranceDate, //basic info
             boolean isBirthCertificatePresent, String clarifiedFirstName, String clarifiedLastName, String clarifiedMiddleName, Date clarifiedBirthDate, //clarified info
             String address, String birthPlace, String occupation);  //clarified info continues
@@ -43,5 +43,7 @@ public interface ChildrenDAO {
     boolean addParentToChild(Child child, Parent parent);
 
     boolean addFileToChild(Child child, File file);
+
+    boolean deleteChild(Child child);
 
 }

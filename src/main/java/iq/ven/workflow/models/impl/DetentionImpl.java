@@ -60,4 +60,15 @@ public class DetentionImpl implements Detention {
             return new DetentionImpl(this);
         }
     }
+
+    @Override
+    public String toString() {
+        return "DetentionImpl{" +
+                "detentionId=" + detentionId +
+                ", getChildId=" + getChildId +
+                ", detentionAddress='" + detentionAddress + '\'' +
+                ", detentionDate=" + detentionDate +
+                ", detentionDoneByWho='" + detentionDoneByWho + '\'' +
+                '}';
+    }
 }
