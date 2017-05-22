@@ -10,7 +10,7 @@ public interface UserDAO {
 
     User getUserById(BigInteger userId);
     User getUserByFullName(String fullName);
-    User getUserByEmail(String email);// not rly good
+    User getUserByEmail(String email);
     List<User> getAllUsers();
     User createUser(String email, String firstName, String lastName, String password);
     boolean deleteUserById(BigInteger userId);

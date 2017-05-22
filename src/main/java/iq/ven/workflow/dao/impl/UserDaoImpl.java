@@ -44,7 +44,12 @@ public class UserDaoImpl implements UserDAO {
     }
 
     public User getUserByEmail(String email) {
-        return null;
+        try {
+            return generalTemplate.queryForObject(SELECT_USER_BY_EMAIL, new Object[]{email}, new UserRowMapper());
+        } catch (DataAccessException e) {
+            LOGGER.error("User not fetched", e);
+            return null;
+        }
     }
 
     public List<User> getAllUsers() {
@@ -72,8 +77,19 @@ public class UserDaoImpl implements UserDAO {
     }
 
     public User authorizeUser(String email, String password) {
-        return null;
+        try {
+            return generalTemplate.queryForObject(SELECT_USER_FOR_AUTHORIZATION, new Object[]{email, password}, new UserRowMapper());
+        } catch (DataAccessException e) {
+            LOGGER.error("User not fetched", e);
+            return null;
+        }
     }
+
+    private static final String SELECT_USER_FOR_AUTHORIZATION = "select " +
+            " user_id, email, first_name, last_name, password, registration_date, rights " +
+            " from users " +
+            " where email = ? " +
+            " and password = ? ";
 
 
     private static final String SELECT_USER_BY_ID = "select " +
