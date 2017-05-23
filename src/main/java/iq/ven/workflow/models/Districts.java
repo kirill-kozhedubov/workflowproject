@@ -8,7 +8,7 @@ public enum Districts {
     MALINOVSKY("Малиновский", IdList.MALINOVSKY),
     PRIMORSKY("Приморский", IdList.PRIMORSKY),
     KIEVSKY("Киевский", IdList.KIEVSKY),
-    SUVOROVSKY("Суворовский", IdList.MALINOVSKY);
+    SUVOROVSKY("Суворовский", IdList.SUVOROVSKY);
 
 
     private final String russianName;

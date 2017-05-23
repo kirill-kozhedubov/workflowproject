@@ -17,5 +17,4 @@ public interface UserDAO {
     boolean deleteUserByEmail(String email);
     boolean giveUserAccessToFile(UserFile userFile, User user);
     boolean removeAccessToFileFromUser(UserFile userFile, User user);
-    User authorizeUser(String email, String password);
 }

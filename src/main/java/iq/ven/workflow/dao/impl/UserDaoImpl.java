@@ -31,14 +31,25 @@ public class UserDaoImpl implements UserDAO {
     private JdbcTemplate generalTemplate;
 
     public User getUserById(BigInteger userId) {
-        return null;
+        try {
+            return generalTemplate.queryForObject(SELECT_USER_BY_ID, new Object[]{userId}, new UserRowMapper());
+        } catch (DataAccessException e) {
+            LOGGER.error("User not fetched by id " + userId, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("User not fetched by id " + userId, e);
+            return null;
+        }
     }
 
     public User getUserByFullName(String fullName) {
         try {
             return generalTemplate.queryForObject(SELECT_USER_BY_FULL_NAME, new Object[]{fullName}, new UserRowMapper());
         } catch (DataAccessException e) {
-            LOGGER.error("User not fetched", e);
+            LOGGER.error("User not fetched by full name " + fullName, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("User not fetched by full name " + fullName, e);
             return null;
         }
     }
@@ -47,17 +58,32 @@ public class UserDaoImpl implements UserDAO {
         try {
             return generalTemplate.queryForObject(SELECT_USER_BY_EMAIL, new Object[]{email}, new UserRowMapper());
         } catch (DataAccessException e) {
-            LOGGER.error("User not fetched", e);
+            LOGGER.error("User not fetched by email " + email, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("User not fetched by email " + email, e);
             return null;
         }
     }
 
     public List<User> getAllUsers() {
-        return null;
+        try {
+            return generalTemplate.query(SELECT_ALL_USERS, new UserRowMapper());
+        } catch (DataAccessException e) {
+            LOGGER.error("All Users not fetched", e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("All Users not fetched", e);
+            return null;
+        }
     }
 
     public User createUser(String email, String firstName, String lastName, String password) {
-        return null;
+        Date registrationDate = new Date();
+        UserRoles userRole = UserRoles.getRoleByValue(1000);
+        User user = new UserImpl.UserBuilder(null, firstName, lastName, email, password, registrationDate, userRole).buildUser();
+        generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRolePoints());
+        return user;
     }
 
     public boolean deleteUserById(BigInteger userId) {
@@ -76,14 +102,6 @@ public class UserDaoImpl implements UserDAO {
         return false;
     }
 
-    public User authorizeUser(String email, String password) {
-        try {
-            return generalTemplate.queryForObject(SELECT_USER_FOR_AUTHORIZATION, new Object[]{email, password}, new UserRowMapper());
-        } catch (DataAccessException e) {
-            LOGGER.error("User not fetched", e);
-            return null;
-        }
-    }
 
     private static final String SELECT_USER_FOR_AUTHORIZATION = "select " +
             " user_id, email, first_name, last_name, password, registration_date, rights " +
@@ -122,6 +140,7 @@ public class UserDaoImpl implements UserDAO {
     private class UserRowMapper implements RowMapper<User> {
         public User mapRow(ResultSet resultSet, int i) throws SQLException {
             User user = null;
+
             BigInteger userId = resultSet.getBigDecimal(UserColumnName.USER_ID.toString()).toBigInteger();
             String email = resultSet.getString(UserColumnName.EMAIL.toString());
             String firstName = resultSet.getString(UserColumnName.FIRST_NAME.toString());
