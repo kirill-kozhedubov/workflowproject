@@ -21,4 +21,8 @@ public interface IdList {
     BigInteger SUVOROVSKY = BigInteger.valueOf(4L);
 
 
+    /*  User roles id section  */
+    BigInteger ADMIN = BigInteger.valueOf(1L);
+    BigInteger REGULAR_USER = BigInteger.valueOf(2L);
+
 }

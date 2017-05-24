@@ -1,11 +1,13 @@
 package iq.ven.workflow.models;
 
+import iq.ven.workflow.common.IdList;
+
 import java.math.BigInteger;
 
 public enum UserRoles {
 
-    ADMIN(BigInteger.valueOf(1L), "ADMIN"),
-    REGULAR_USER(BigInteger.valueOf(2L), "REGULAR_USER");
+    ADMIN(IdList.ADMIN, "ADMIN"),
+    REGULAR_USER(IdList.REGULAR_USER, "REGULAR_USER");
 
 
     final private BigInteger roleId;
