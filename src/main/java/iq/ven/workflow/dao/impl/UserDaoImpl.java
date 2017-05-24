@@ -79,11 +79,21 @@ public class UserDaoImpl implements UserDAO {
     }
 
     public User createUser(String email, String firstName, String lastName, String password) {
-        Date registrationDate = new Date();
-        UserRoles userRole = UserRoles.REGULAR_USER;
-        User user = new UserImpl.UserBuilder(null, firstName, lastName, email, password, registrationDate, userRole).buildUser();
-        generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRoleId());
-        return user;
+        try {
+            Date registrationDate = new Date();
+            UserRoles userRole = UserRoles.REGULAR_USER;
+            User user = new UserImpl.UserBuilder(null, firstName, lastName, email, password, registrationDate, userRole).buildUser();
+            generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRoleId());
+            return user;
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in creating user with params Email:" + email +
+                    " FirstName:" + firstName + " LastName:" + lastName + " Password:" + password, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error in creating user with params Email:" + email +
+                    " FirstName:" + firstName + " LastName:" + lastName + " Password:" + password, e);
+            return null;
+        }
     }
 
 
@@ -123,28 +133,28 @@ public class UserDaoImpl implements UserDAO {
         return false;
     }
 
-    private static final String SELECT_USER_BY_ID = "select " +
+    private static final String SELECT_USER_BY_ID = "SELECT " +
             " user_id, email, first_name, last_name, password, registration_date, rights " +
-            " from users " +
-            " where user_id = ?";
+            " FROM users " +
+            " WHERE user_id = ?";
     private static final String SELECT_USER_BY_FULL_NAME = "SELECT " +
             " user_id, email, first_name, last_name, password, registration_date, rights " +
             " FROM users " +
             " WHERE (last_name || ' ' || first_name) = ?";
 
-    private static final String SELECT_USER_BY_EMAIL = "select " +
+    private static final String SELECT_USER_BY_EMAIL = "SELECT " +
             " user_id, email, first_name, last_name, password, registration_date, rights " +
-            " from users " +
-            " where email = ?";
+            " FROM users " +
+            " WHERE email = ?";
 
-    private static final String SELECT_ALL_USERS = "select " +
+    private static final String SELECT_ALL_USERS = "SELECT " +
             " user_id, email, first_name, last_name, password, registration_date, rights " +
-            " from users";
+            " FROM users";
 
 
-    private static final String INSERT_USER = "insert into " +
+    private static final String INSERT_USER = "INSERT INTO " +
             " users (email, first_name, last_name, password, registration_date, rights) " +
-            " values (?,?,?,?,?,?)";
+            " VALUES (?,?,?,?,?,?)";
 
     private static final String INSERT_USER_FILE = "";
     private static final String INSERT_USER_FILE_ACCESS = "";
