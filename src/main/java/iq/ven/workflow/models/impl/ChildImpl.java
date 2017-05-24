@@ -116,7 +116,7 @@ public class ChildImpl implements Child {
             this.entranceDate = entranceDate;
         }
 
-        public ChildBasicBuilder setParents(ClarifiedChild clarifiedInfo) {
+        public ChildBasicBuilder setClarifiedChild(ClarifiedChild clarifiedInfo) {
             this.clarifiedInfo = clarifiedInfo;
             return this;
         }

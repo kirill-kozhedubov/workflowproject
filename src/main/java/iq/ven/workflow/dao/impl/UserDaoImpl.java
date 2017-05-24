@@ -80,10 +80,15 @@ public class UserDaoImpl implements UserDAO {
 
     public User createUser(String email, String firstName, String lastName, String password) {
         Date registrationDate = new Date();
-        UserRoles userRole = UserRoles.getRoleByValue(1000);
+        UserRoles userRole = UserRoles.REGULAR_USER;
         User user = new UserImpl.UserBuilder(null, firstName, lastName, email, password, registrationDate, userRole).buildUser();
-        generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRolePoints());
+        generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRoleId());
         return user;
+    }
+
+
+    public boolean deleteUser(User user) {
+        return deleteUserById(user.getUserId());
     }
 
     public boolean deleteUserById(BigInteger userId) {
@@ -95,20 +100,28 @@ public class UserDaoImpl implements UserDAO {
     }
 
     public boolean giveUserAccessToFile(UserFile userFile, User user) {
-        return false;
+        try {
+            if (user != null && userFile != null) {
+               /* generalTemplate.update(INSERT_OBJREFERENCE_RELATION, PROJECT_SHARED_RELATION_ATTR_ID, user.getId(), project.getId());*/
+            } else {
+                return false;
+            }
+        } catch (DataAccessException e) {
+            LOGGER.error("Access to project (id: " + userFile.getFileId() + ", name: " + userFile.getFileName() +
+                    ") not granted to User (id: " + user.getUserId() + ", name: " + user.getFullName() + ")", e);
+            return false;
+        } catch (Exception e) {
+            LOGGER.error("Access to project (id: " + userFile.getFileId() + ", name: " + userFile.getFileName() +
+                    ") not granted to User (id: " + user.getUserId() + ", name: " + user.getFullName() + ")", e);
+            return false;
+        }
+        return true;
     }
+
 
     public boolean removeAccessToFileFromUser(UserFile userFile, User user) {
         return false;
     }
-
-
-    private static final String SELECT_USER_FOR_AUTHORIZATION = "select " +
-            " user_id, email, first_name, last_name, password, registration_date, rights " +
-            " from users " +
-            " where email = ? " +
-            " and password = ? ";
-
 
     private static final String SELECT_USER_BY_ID = "select " +
             " user_id, email, first_name, last_name, password, registration_date, rights " +
@@ -147,8 +160,9 @@ public class UserDaoImpl implements UserDAO {
             String lastName = resultSet.getString(UserColumnName.LAST_NAME.toString());
             String password = resultSet.getString(UserColumnName.PASSWORD.toString());
             Date registrationDate = resultSet.getDate(UserColumnName.REGISTRATION_DATE.toString());
-            int rights = resultSet.getInt(UserColumnName.RIGHTS.toString());
-            UserRoles role = UserRoles.getRoleByValue(rights);
+
+            BigInteger rights = resultSet.getBigDecimal(UserColumnName.RIGHTS.toString()).toBigInteger();
+            UserRoles role = UserRoles.getRoleById(rights);
 
             user = new UserImpl.UserBuilder(userId, firstName, lastName, email, password, registrationDate, role).buildUser();
             return user;

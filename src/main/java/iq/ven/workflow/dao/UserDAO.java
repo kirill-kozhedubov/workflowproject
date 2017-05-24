@@ -13,6 +13,7 @@ public interface UserDAO {
     User getUserByEmail(String email);
     List<User> getAllUsers();
     User createUser(String email, String firstName, String lastName, String password);
+    boolean deleteUser(User user);
     boolean deleteUserById(BigInteger userId);
     boolean deleteUserByEmail(String email);
     boolean giveUserAccessToFile(UserFile userFile, User user);

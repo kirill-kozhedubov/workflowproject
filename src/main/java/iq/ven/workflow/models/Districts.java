@@ -19,6 +19,15 @@ public enum Districts {
         this.dbId = dbId;
     }
 
+    public static Districts getDistrictById(BigInteger dbId) {
+        for (Districts e : Districts.values()) {
+            if (e.dbId.equals(dbId)) {
+                return e;
+            }
+        }
+        return null;// not found
+    }
+
     public BigInteger getDbId() {
         return dbId;
     }

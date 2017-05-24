@@ -1,27 +1,41 @@
 package iq.ven.workflow.models;
 
+import java.math.BigInteger;
+
 public enum UserRoles {
 
-    ADMIN(100000),
-    REGUALR_USER(1000);
+    ADMIN(BigInteger.valueOf(1L), "ADMIN"),
+    REGULAR_USER(BigInteger.valueOf(2L), "REGULAR_USER");
 
 
-    final private int rolePoints;
+    final private BigInteger roleId;
+    final private String roleName;
 
-    UserRoles(int rolePoints) {
-        this.rolePoints = rolePoints;
+    UserRoles(BigInteger roleId, String roleName) {
+        this.roleId = roleId;
+        this.roleName = roleName;
     }
 
-    public int getRolePoints() {
-        return rolePoints;
+    public BigInteger getRoleId() {
+        return roleId;
     }
 
-    public static UserRoles getRoleByValue(int rolePoints) {
+    public String getRoleName() {
+        return roleName;
+    }
+
+
+    public static UserRoles getRoleById(BigInteger roleId) {
         for (UserRoles e : UserRoles.values()) {
-            if (e.rolePoints == rolePoints) {
+            if (e.roleId.equals(roleId)) {
                 return e;
             }
         }
         return null;// not found
+    }
+
+    @Override
+    public String toString() {
+        return roleName;
     }
 }

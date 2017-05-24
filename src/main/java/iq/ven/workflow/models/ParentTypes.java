@@ -23,6 +23,15 @@ public enum ParentTypes {
         this.dbId = dbId;
     }
 
+    public static ParentTypes getParentTypeById(BigInteger dbId) {
+        for (ParentTypes e : ParentTypes.values()) {
+            if (e.dbId.equals(dbId)) {
+                return e;
+            }
+        }
+        return null;// not found
+    }
+
     public BigInteger getDbId() {
         return dbId;
     }
