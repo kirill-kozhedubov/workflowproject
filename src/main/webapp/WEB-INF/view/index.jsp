@@ -38,6 +38,14 @@
             <p>Ваш логин: <sec:authentication property="principal.username" /></p>
             <p><a class="btn btn-lg btn-danger" href="<c:url value="/logout" />" role="button">Выйти</a></p>
 
+            <p><a class="btn btn-default" href="<c:url value="/admin/add-child" />" role="button">A: add child</a></p>
+            <p><a class="btn btn-default" href="<c:url value="/admin/children" />" role="button">A: view children</a></p>
+            <p><a class="btn btn-default" href="<c:url value="/admin/user-create" />" role="button">A: user create</a></p>
+
+            <p><a class="btn btn-default" href="<c:url value="/u" />" role="button">U/A: dashboard</a></p>
+            <p><a class="btn btn-default" href="<c:url value="/u/share-file" />" role="button">U/A: share file</a></p>
+            <p><a class="btn btn-default" href="<c:url value="/u/download-file" />" role="button">U/A: download file</a></p>
+            <p><a class="btn btn-default" href="<c:url value="/u/add-file" />" role="button">U/A: add file</a></p>
         </sec:authorize>
     </div>
 

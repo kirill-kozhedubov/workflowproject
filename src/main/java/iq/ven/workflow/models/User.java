@@ -19,6 +19,6 @@ public interface User {
 
     Date getRegistrationDate();
 
-    UserRoles getUsersRole();
+    UserTypes getUsersRole();
 
 }

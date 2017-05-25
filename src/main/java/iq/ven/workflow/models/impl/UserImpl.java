@@ -1,7 +1,7 @@
 package iq.ven.workflow.models.impl;
 
 import iq.ven.workflow.models.User;
-import iq.ven.workflow.models.UserRoles;
+import iq.ven.workflow.models.UserTypes;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -14,7 +14,7 @@ public class UserImpl implements User {
     private String email;
     private String password;
     private Date registrationDate;
-    private UserRoles userRole;
+    private UserTypes userRole;
 
     private UserImpl(UserBuilder builder) {
         this.userId = builder.userId;
@@ -54,7 +54,7 @@ public class UserImpl implements User {
         return registrationDate;
     }
 
-    public UserRoles getUsersRole() {
+    public UserTypes getUsersRole() {
         return userRole;
     }
 
@@ -66,9 +66,9 @@ public class UserImpl implements User {
         private String email;
         private String password;
         private Date registrationDate;
-        private UserRoles userRole;
+        private UserTypes userRole;
 
-        public UserBuilder(BigInteger userId, String firstName, String lastName, String email, String password, Date registrationDate, UserRoles userRole) {
+        public UserBuilder(BigInteger userId, String firstName, String lastName, String email, String password, Date registrationDate, UserTypes userRole) {
             this.userId = userId;
             this.firstName = firstName;
             this.lastName = lastName;

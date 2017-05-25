@@ -2,6 +2,7 @@ package iq.ven.workflow.dao;
 
 import iq.ven.workflow.common.configurations.AppContext;
 import iq.ven.workflow.dao.impl.ChildrenDaoImpl;
+import iq.ven.workflow.dao.impl.FileDaoImpl;
 import iq.ven.workflow.dao.impl.UserDaoImpl;
 import org.apache.log4j.Logger;
 import org.springframework.context.ApplicationContext;
@@ -17,22 +18,23 @@ public class DaoTestClass {
     private static final Logger LOGGER = Logger.getLogger(DaoTestClass.class);
 
     //dao
-    private UserDaoImpl userDao;
-    private ChildrenDaoImpl childrenDao;
+    public UserDaoImpl userDao;
+    public ChildrenDaoImpl childrenDao;
+    public FileDaoImpl fileDao;
 
     //context
-    private DataSource dataSource;
-    private DataSourceTransactionManager transactionManager;
-    private JdbcTemplate generalTemplate;
-    private SimpleJdbcCall simpleCallTemplate;
+    public DataSource dataSource;
+    public DataSourceTransactionManager transactionManager;
+    public JdbcTemplate generalTemplate;
+    public SimpleJdbcCall simpleCallTemplate;
 
 
-    public static void main(String[] args) {
+    public static DaoTestClass getInstance() {
         DaoTestClass daoTestClass = new DaoTestClass();
         daoTestClass.raiseContext();
         daoTestClass.prepareDaoObjects();
         daoTestClass.testCode();
-
+        return daoTestClass;
     }
 
     void raiseContext() {
@@ -46,35 +48,36 @@ public class DaoTestClass {
     void prepareDaoObjects() {
         userDao = new UserDaoImpl();
         childrenDao = new ChildrenDaoImpl();
+        fileDao = new FileDaoImpl();
 
         Class<UserDaoImpl> classU = UserDaoImpl.class;
         Class<ChildrenDaoImpl> classC = ChildrenDaoImpl.class;
+        Class<FileDaoImpl> classF = FileDaoImpl.class;
 
-        Field simpleCallU = null;
         Field jdbcTemplateU = null;
-
+        Field jdbcTemplateF = null;
         Field simpleCallC = null;
         Field jdbcTemplateC = null;
 
         try {
             simpleCallC = classC.getDeclaredField("simpleCallTemplate");
             jdbcTemplateC = classC.getDeclaredField("generalTemplate");
-            simpleCallU = classU.getDeclaredField("simpleCallTemplate");
             jdbcTemplateU = classU.getDeclaredField("generalTemplate");
+            jdbcTemplateF = classF.getDeclaredField("generalTemplate");
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
 
         simpleCallC.setAccessible(true);
         jdbcTemplateC.setAccessible(true);
-        simpleCallU.setAccessible(true);
         jdbcTemplateU.setAccessible(true);
+        jdbcTemplateF.setAccessible(true);
 
         try {
             simpleCallC.set(childrenDao, simpleCallTemplate);
             jdbcTemplateC.set(childrenDao, generalTemplate);
-            simpleCallU.set(userDao, simpleCallTemplate);
             jdbcTemplateU.set(userDao, generalTemplate);
+            jdbcTemplateF.set(fileDao, generalTemplate);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

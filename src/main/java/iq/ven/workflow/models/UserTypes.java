@@ -4,16 +4,16 @@ import iq.ven.workflow.common.IdList;
 
 import java.math.BigInteger;
 
-public enum UserRoles {
+public enum UserTypes {
 
-    ADMIN(IdList.ADMIN, "ADMIN"),
-    REGULAR_USER(IdList.REGULAR_USER, "REGULAR_USER");
+    ADMIN(IdList.ADMIN, "ROLE_ADMIN"),
+    REGULAR_USER(IdList.REGULAR_USER, "ROLE_REGULAR_USER");
 
 
     final private BigInteger roleId;
     final private String roleName;
 
-    UserRoles(BigInteger roleId, String roleName) {
+    UserTypes(BigInteger roleId, String roleName) {
         this.roleId = roleId;
         this.roleName = roleName;
     }
@@ -27,8 +27,8 @@ public enum UserRoles {
     }
 
 
-    public static UserRoles getRoleById(BigInteger roleId) {
-        for (UserRoles e : UserRoles.values()) {
+    public static UserTypes getRoleById(BigInteger roleId) {
+        for (UserTypes e : UserTypes.values()) {
             if (e.roleId.equals(roleId)) {
                 return e;
             }

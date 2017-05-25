@@ -1,9 +1,8 @@
 package iq.ven.workflow.models;
 
 import java.math.BigInteger;
-import java.util.List;
 
-public interface UserFile {
+public interface ChildFile {
 
     BigInteger getFileId();
 
@@ -11,8 +10,6 @@ public interface UserFile {
 
     String getFileName();
 
-    BigInteger getFileAuthor();
-
-    List<BigInteger> getListOfUsersFileAccessibleTo();
+    BigInteger getChildId();
 
 }

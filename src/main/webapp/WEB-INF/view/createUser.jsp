@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Share file</title>
+    <title>Create user</title>
 </head>
 <body>
 
