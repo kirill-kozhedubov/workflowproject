@@ -36,28 +36,28 @@ public class ChildrenDaoImpl implements ChildrenDAO {
     private JdbcTemplate generalTemplate;
 
 
-    public Child saveChildToDB(String firstName, String lastName, String middleName, Date birthDate, Districts district,
+    public Child saveChildToDB(/*String firstName, String lastName, String middleName, Date birthDate, Districts district,
                                String personalRecordCode, Date entranceDate, boolean isBirthCertificatePresent, String clarifiedFirstName,
                                String clarifiedLastName, String clarifiedMiddleName, Date clarifiedBirthDate, String address, String birthPlace,
-                               String occupation) {
+                               String occupation*/Child child) {
         try {
             simpleCallTemplate.withFunctionName(INSERT_CHILD_FUNCTION);
             SqlParameterSource in = new MapSqlParameterSource()
-                    .addValue("_firstname", firstName)
-                    .addValue("_lastname", lastName)
-                    .addValue("_middlename", middleName)
-                    .addValue("_birthdate", birthDate)
-                    .addValue("_district", district.getDbId())
-                    .addValue("_personalrecordcode", personalRecordCode)
-                    .addValue("_entrancedate", entranceDate)
-                    .addValue("_isbirthcertificatepresent", isBirthCertificatePresent)
-                    .addValue("_clarifiedfirstname", clarifiedFirstName)
-                    .addValue("_clarifiedlastname", clarifiedLastName)
-                    .addValue("_clarifiedmiddlename", clarifiedMiddleName)
-                    .addValue("_clarifiedbirthdate", clarifiedBirthDate)
-                    .addValue("_address", address)
-                    .addValue("_birthplace", birthPlace)
-                    .addValue("_occupation", occupation);
+                    .addValue("_firstname", child.getFirstName())
+                    .addValue("_lastname",  child.getLastName())
+                    .addValue("_middlename",  child.getMiddleName())
+                    .addValue("_birthdate", child.getBirthDate())
+                    .addValue("_district", child.getDistrict().getDbId())
+                    .addValue("_personalrecordcode", child.getPersonalRecordCode())
+                    .addValue("_entrancedate", child.getEntranceDate())
+                    .addValue("_isbirthcertificatepresent", child.getClarifiedInfo().getBirthCertificatePresenceInfo())
+                    .addValue("_clarifiedfirstname", child.getClarifiedInfo().getFirstName())
+                    .addValue("_clarifiedlastname", child.getClarifiedInfo().getLastName())
+                    .addValue("_clarifiedmiddlename", child.getClarifiedInfo().getMiddleName())
+                    .addValue("_clarifiedbirthdate", child.getClarifiedInfo().getBirthDate())
+                    .addValue("_address", child.getClarifiedInfo().getAddress())
+                    .addValue("_birthplace", child.getClarifiedInfo().getBirthPlace())
+                    .addValue("_occupation", child.getClarifiedInfo().getOccupation());
             BigInteger insertedChildId = simpleCallTemplate.executeFunction(BigDecimal.class, in).toBigInteger();
 
             return getChildById(insertedChildId);

@@ -9,10 +9,10 @@ import java.util.List;
 
 public interface ChildrenDAO {
 
-    Child saveChildToDB(
-            String firstName, String lastName, String middleName, Date birthDate, Districts district, String personalRecordCode, Date entranceDate, //basic info
+    Child saveChildToDB(Child child
+            /*String firstName, String lastName, String middleName, Date birthDate, Districts district, String personalRecordCode, Date entranceDate, //basic info
             boolean isBirthCertificatePresent, String clarifiedFirstName, String clarifiedLastName, String clarifiedMiddleName, Date clarifiedBirthDate, //clarified info
-            String address, String birthPlace, String occupation);  //clarified info continues
+            String address, String birthPlace, String occupation*/);  //clarified info continues
 
     List<Child> getAllChildrenList();
 
