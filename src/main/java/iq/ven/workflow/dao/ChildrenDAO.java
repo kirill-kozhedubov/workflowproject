@@ -2,18 +2,17 @@ package iq.ven.workflow.dao;
 
 import iq.ven.workflow.models.*;
 
-import java.io.File;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
 public interface ChildrenDAO {
 
+
     Child saveChildToDB(Child child
             /*String firstName, String lastName, String middleName, Date birthDate, Districts district, String personalRecordCode, Date entranceDate, //basic info
             boolean isBirthCertificatePresent, String clarifiedFirstName, String clarifiedLastName, String clarifiedMiddleName, Date clarifiedBirthDate, //clarified info
             String address, String birthPlace, String occupation*/);  //clarified info continues
-
     List<Child> getAllChildrenList();
 
     Child getChildById(BigInteger childId);
@@ -42,7 +41,7 @@ public interface ChildrenDAO {
 
     boolean addParentToChild(Child child, Parent parent);
 
-    boolean addFileToChild(Child child, File file);
+    boolean addFileToChild(Child child, ChildFile file);
 
     boolean deleteChild(Child child);
 

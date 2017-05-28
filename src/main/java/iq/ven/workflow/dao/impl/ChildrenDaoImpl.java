@@ -11,13 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
-import java.io.File;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -35,41 +31,51 @@ public class ChildrenDaoImpl implements ChildrenDAO {
     @Autowired
     private JdbcTemplate generalTemplate;
 
-
-    public Child saveChildToDB(/*String firstName, String lastName, String middleName, Date birthDate, Districts district,
-                               String personalRecordCode, Date entranceDate, boolean isBirthCertificatePresent, String clarifiedFirstName,
-                               String clarifiedLastName, String clarifiedMiddleName, Date clarifiedBirthDate, String address, String birthPlace,
-                               String occupation*/Child child) {
+    @Override
+    public Child saveChildToDB(Child child) {
         try {
-            simpleCallTemplate.withFunctionName(INSERT_CHILD_FUNCTION);
-            SqlParameterSource in = new MapSqlParameterSource()
-                    .addValue("_firstname", child.getFirstName())
-                    .addValue("_lastname",  child.getLastName())
-                    .addValue("_middlename",  child.getMiddleName())
-                    .addValue("_birthdate", child.getBirthDate())
-                    .addValue("_district", child.getDistrict().getDbId())
-                    .addValue("_personalrecordcode", child.getPersonalRecordCode())
-                    .addValue("_entrancedate", child.getEntranceDate())
-                    .addValue("_isbirthcertificatepresent", child.getClarifiedInfo().getBirthCertificatePresenceInfo())
-                    .addValue("_clarifiedfirstname", child.getClarifiedInfo().getFirstName())
-                    .addValue("_clarifiedlastname", child.getClarifiedInfo().getLastName())
-                    .addValue("_clarifiedmiddlename", child.getClarifiedInfo().getMiddleName())
-                    .addValue("_clarifiedbirthdate", child.getClarifiedInfo().getBirthDate())
-                    .addValue("_address", child.getClarifiedInfo().getAddress())
-                    .addValue("_birthplace", child.getClarifiedInfo().getBirthPlace())
-                    .addValue("_occupation", child.getClarifiedInfo().getOccupation());
-            BigInteger insertedChildId = simpleCallTemplate.executeFunction(BigDecimal.class, in).toBigInteger();
+            String firstName = child.getFirstName();
+            String lastName = child.getLastName();
+            String middleName = child.getMiddleName();
+            Date birthDate = child.getBirthDate();
+            BigInteger district = child.getDistrict().getDbId();
+            String personalRecordCode = child.getPersonalRecordCode();
+            Date entranceDate = child.getEntranceDate();
 
-            return getChildById(insertedChildId);
+            boolean isBirthCertificatePresent = child.getClarifiedInfo().getBirthCertificatePresenceInfo();
+            String clarifiedFirstName = child.getClarifiedInfo().getFirstName();
+            String clarifiedLastName = child.getClarifiedInfo().getLastName();
+            String clarifiedMiddleName = child.getClarifiedInfo().getMiddleName();
+            Date clarifiedBirthDate = child.getClarifiedInfo().getBirthDate();
+            String address = child.getClarifiedInfo().getAddress();
+            String birthPlace = child.getClarifiedInfo().getBirthPlace();
+            String occupation = child.getClarifiedInfo().getOccupation();
+
+            generalTemplate.update(INSERT_BASIC_CHILD, firstName, lastName, middleName, birthDate, district.longValue(), personalRecordCode, entranceDate);
+            BigInteger childIdFromDb = generalTemplate.queryForObject(SELECT_BASIC_CHILD_ID_BY_PERSONAL_RECORD_CODE, BigInteger.class, personalRecordCode);
+            generalTemplate.update(INSERT_CLARIFIED_CHILD, childIdFromDb.longValue(), isBirthCertificatePresent, clarifiedFirstName, clarifiedLastName, clarifiedMiddleName, clarifiedBirthDate,
+                    address, birthPlace, occupation);
+
+            return getChildById(childIdFromDb);
         } catch (DataAccessException e) {
-            LOGGER.error("Error in inserting child to db with params (*params)", e);
+            LOGGER.error("Error in inserting child to db with params  " + child, e);
             return null;
         } catch (Exception e) {
-            LOGGER.error("Error in inserting child to db with params (*params)", e);
+            LOGGER.error("Error in inserting child to db with params " + child, e);
             return null;
         }
     }
 
+    private final static String INSERT_BASIC_CHILD = "INSERT INTO children_basic_info " +
+            " (first_name, last_name, middle_name, birth_date, district_id, personal_record_code, entrance_date)" +
+            " VALUES (?,?,?,?,?,?,?)";
+    private final static String SELECT_BASIC_CHILD_ID_BY_PERSONAL_RECORD_CODE = "SELECT child_id FROM children_basic_info WHERE personal_record_code = ?";
+    private final static String INSERT_CLARIFIED_CHILD = "INSERT INTO children_clarified_info " +
+            "(child_id, birth_certificate_presence, first_name, last_name, middle_name, birth_date, address, birth_place, occupation) " +
+            " VALUES (?,?,?,?,?,?,?,?,?)";
+
+
+    @Override
     public List<Child> getAllChildrenList() {
         try {
             return generalTemplate.query(SELECT_ALL_CHILDREN, new ChildrenRowMapper());
@@ -82,9 +88,10 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public Child getChildById(BigInteger childId) {
         try {
-            return generalTemplate.queryForObject(SELECT_CHILD_BY_ID, new Object[]{childId}, new ChildrenRowMapper());
+            return generalTemplate.queryForObject(SELECT_CHILD_BY_ID, new Object[]{childId.longValue()}, new ChildrenRowMapper());
         } catch (DataAccessException e) {
             LOGGER.error("Error in fetching child by ID " + childId, e);
             return null;
@@ -94,6 +101,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public Child getChildByFullName(String fullName) {
         try {
             return generalTemplate.queryForObject(SELECT_CHILD_BY_FULL_NAME, new Object[]{fullName}, new ChildrenRowMapper());
@@ -106,6 +114,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public List<Child> getChildrenByLastName(String lastName) {
         try {
             return generalTemplate.query(SELECT_CHILDREN_BY_LAST_NAME, new Object[]{lastName}, new ChildrenRowMapper());
@@ -118,6 +127,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public List<Child> getChildrenByBirthDate(Date birthDate) {
         try {
             return generalTemplate.query(SELECT_CHILDREN_BY_BIRTH_DATE, new Object[]{birthDate}, new ChildrenRowMapper());
@@ -130,6 +140,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public List<Child> getChildrenByBirthYear(int birthYear) {
         try {
             return generalTemplate.query(SELECT_CHILDREN_BY_BIRTH_YEAR, new Object[]{birthYear}, new ChildrenRowMapper());
@@ -141,6 +152,8 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             return null;
         }
     }
+
+    @Override
 
     public List<Child> getChildrenByDistrict(Districts district) {
         try {
@@ -156,6 +169,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public Child getChildByPersonalRecordCode(String personalRecordCode) {
         try {
             return generalTemplate.queryForObject(SELECT_CHILD_BY_PERSONAL_RECORD_CODE, new Object[]{personalRecordCode}, new ChildrenRowMapper());
@@ -168,6 +182,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public List<Child> getChildrenEnteredInRangeOfDates(Date after, Date before) {
         try {
             return generalTemplate.query(SELECT_CHILDREN_ENTERED_IN_RANGE_OF_DATES,
@@ -181,13 +196,15 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public ClarifiedChild getClarifiedChild(Child child) {
         return null; //maybe this method is not needed at all
     }
 
+    @Override
     public List<Detention> getChildDetentions(Child child) {
         try {
-            return generalTemplate.query(SELECT_CHILD_DETENTIONS, new Object[]{child.getChildId()}, new DetentionRowMapper());
+            return generalTemplate.query(SELECT_CHILD_DETENTIONS, new Object[]{child.getChildId().longValue()}, new DetentionRowMapper());
         } catch (DataAccessException e) {
             LOGGER.error("Error in fetching child's detentions. " + child, e);
             return null;
@@ -197,9 +214,10 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public List<Parent> getChildParents(Child child) {
         try {
-            return generalTemplate.query(SELECT_CHILD_PARENTS, new Object[]{child.getChildId()}, new ParentRowMapper());
+            return generalTemplate.query(SELECT_CHILD_PARENTS, new Object[]{child.getChildId().longValue()}, new ParentRowMapper());
         } catch (DataAccessException e) {
             LOGGER.error("Error in fetching child's parents. " + child, e);
             return null;
@@ -209,11 +227,12 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public boolean addDetentionToChild(Child child, Detention detention) {
         try {
             if (child != null && detention != null) {
                 generalTemplate.update(INSERT_CHILD_DETENTION,
-                        child.getChildId(), detention.getDetentionDoneByWho(), detention.getDetentionDate(), detention.getDetentionAddress());
+                        child.getChildId().longValue(), detention.getDetentionDoneByWho(), detention.getDetentionDate(), detention.getDetentionAddress());
                 return true;
             } else {
                 LOGGER.error("Error in adding detention to child because of nulls. CHILD:" + child + " DETENTION:" + detention);
@@ -228,11 +247,12 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
     public boolean addParentToChild(Child child, Parent parent) {
         try {
             if (child != null && parent != null) {
                 generalTemplate.update(INSERT_CHILD_PARENT,
-                        child.getChildId(), parent.getParentType().getDbId(), parent.getParentName(), parent.getParentInfo());
+                        child.getChildId().longValue(), parent.getParentType().getDbId().longValue(), parent.getParentName(), parent.getParentInfo());
                 return true;
             } else {
                 LOGGER.error("Error in adding parent to child because of nulls. CHILD:" + child + " PARENT:" + parent);
@@ -247,10 +267,12 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
-    public boolean addFileToChild(Child child, File file) {
+    @Override
+    public boolean addFileToChild(Child child, ChildFile file) {
         return false;
     }
 
+    @Override
     public boolean deleteChild(Child child) {
         return false;
     }

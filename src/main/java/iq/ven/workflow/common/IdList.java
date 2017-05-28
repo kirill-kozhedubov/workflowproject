@@ -10,7 +10,7 @@ public interface IdList {
     BigInteger GRANDFATHER = BigInteger.valueOf(4L);
     BigInteger UNCLE = BigInteger.valueOf(5L);
     BigInteger AUNT = BigInteger.valueOf(6L);
-    BigInteger SISTER = BigInteger.valueOf(17L);
+    BigInteger SISTER = BigInteger.valueOf(7L);
     BigInteger BROTHER = BigInteger.valueOf(8L);
     BigInteger CUSTODIAN = BigInteger.valueOf(9L);
 

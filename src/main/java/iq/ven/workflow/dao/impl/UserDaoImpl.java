@@ -21,13 +21,15 @@ import java.util.List;
 
 @Repository("userDaoImpl")
 public class UserDaoImpl implements UserDAO {
+
     private static final Logger LOGGER = Logger.getLogger(UserDaoImpl.class);
+
     @Autowired
     private JdbcTemplate generalTemplate;
 
     public User getUserById(BigInteger userId) {
         try {
-            return generalTemplate.queryForObject(SELECT_USER_BY_ID, new Object[]{userId}, new UserRowMapper());
+            return generalTemplate.queryForObject(SELECT_USER_BY_ID, new Object[]{userId.longValue()}, new UserRowMapper());
         } catch (DataAccessException e) {
             LOGGER.error("User not fetched by id " + userId, e);
             return null;
@@ -37,6 +39,7 @@ public class UserDaoImpl implements UserDAO {
         }
     }
 
+    @Override
     public User getUserByFullName(String fullName) {
         try {
             return generalTemplate.queryForObject(SELECT_USER_BY_FULL_NAME, new Object[]{fullName}, new UserRowMapper());
@@ -49,6 +52,7 @@ public class UserDaoImpl implements UserDAO {
         }
     }
 
+    @Override
     public User getUserByEmail(String email) {
         try {
             return generalTemplate.queryForObject(SELECT_USER_BY_EMAIL, new Object[]{email}, new UserRowMapper());
@@ -61,6 +65,7 @@ public class UserDaoImpl implements UserDAO {
         }
     }
 
+    @Override
     public List<User> getAllUsers() {
         try {
             return generalTemplate.query(SELECT_ALL_USERS, new UserRowMapper());
@@ -73,12 +78,19 @@ public class UserDaoImpl implements UserDAO {
         }
     }
 
+    @Override
+    public List<User> getAllUsersThatHaveAccessToFile(UserFile file) {
+        //!TODO this method
+        return null;
+    }
+
+    @Override
     public User createUser(String email, String firstName, String lastName, String password) {
         try {
             Date registrationDate = new Date();
             UserTypes userRole = UserTypes.REGULAR_USER;
             User user = new UserImpl.UserBuilder(null, firstName, lastName, email, password, registrationDate, userRole).buildUser();
-            generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRoleId());
+            generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRoleId().longValue());
             return user;
         } catch (DataAccessException e) {
             LOGGER.error("Error in creating user with params Email:" + email +
@@ -91,15 +103,17 @@ public class UserDaoImpl implements UserDAO {
         }
     }
 
-
+    @Override
     public boolean deleteUser(User user) {
         return deleteUserById(user.getUserId());
     }
 
+    @Override
     public boolean deleteUserById(BigInteger userId) {
         return false;
     }
 
+    @Override
     public boolean deleteUserByEmail(String email) {
         return false;
     }
@@ -139,7 +153,6 @@ public class UserDaoImpl implements UserDAO {
             " VALUES (?,?,?,?,?,?)";
 
 
-
     private class UserRowMapper implements RowMapper<User> {
         public User mapRow(ResultSet resultSet, int i) throws SQLException {
             User user = null;
@@ -158,7 +171,6 @@ public class UserDaoImpl implements UserDAO {
             return user;
         }
     }
-
 
 
     private enum UserColumnName {

@@ -7,6 +7,7 @@ import iq.ven.workflow.models.impl.ChildImpl;
 import iq.ven.workflow.models.impl.ClarifiedChildImpl;
 import iq.ven.workflow.models.impl.DetentionImpl;
 import iq.ven.workflow.models.impl.ParentImpl;
+import org.apache.log4j.Logger;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 public class ChildrenGenerator {
+    private static final Logger LOGGER = Logger.getLogger(ChildrenGenerator.class);
     ChildrenDAO childrenDAO;
 
     Random random = new Random();
@@ -22,12 +24,15 @@ public class ChildrenGenerator {
     public static void main(String[] args) {
         ChildrenGenerator childrenGenerator = new ChildrenGenerator();
         childrenGenerator.setupdao();
+        LOGGER.info("DAO setup completed");
         Random random = new Random();
 
+        LOGGER.info("Starging generation...");
         for (int i = 0; i < 100; i++) {
             Child genChild = childrenGenerator.generateChild();
+            LOGGER.info("genChild: " + genChild);
             Child genChildFromDB = childrenGenerator.saveGeneratedChild(genChild);
-
+            LOGGER.info("Child I got from db: " + genChildFromDB);
 
             List<Parent> parents = new ArrayList<>();
             List<Detention> detentions = new ArrayList<>();
@@ -41,7 +46,7 @@ public class ChildrenGenerator {
 
             childrenGenerator.saveGeneratedChildsDetentions(detentions, genChildFromDB);
             childrenGenerator.saveGeneratedChildsParents(parents, genChildFromDB);
-
+            LOGGER.info("Child : " + genChild.getFullName() + " added to db, moving to next one.");
         }
     }
 
@@ -55,15 +60,15 @@ public class ChildrenGenerator {
         String firstName = "First" + random.nextInt(100000);
         String lastName = "Last" + random.nextInt(100000);
         String middleName = "Middle" + random.nextInt(100000);
-        Date birthDate = new Date(Math.abs(System.currentTimeMillis() - random.nextLong()));
-        Districts district = Districts.getDistrictById(BigInteger.valueOf(random.nextInt(Districts.values().length)));
+        Date birthDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
+        Districts district = Districts.values()[random.nextInt(Districts.values().length)];
         String personalRecordCode = "code" + random.nextInt(500000) + random.nextBoolean();
-        Date entranceDate = new Date(Math.abs(System.currentTimeMillis() - random.nextLong()));
+        Date entranceDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
         boolean isBirthCertificatePresent = random.nextBoolean();
         String clarifiedFirstName = "cFirst" + random.nextInt(100000);
         String clarifiedLastName = "cLast" + random.nextInt(100000);
         String clarifiedMiddleName = "cMiddle" + random.nextInt(100000);
-        Date clarifiedBirthDate = new Date(Math.abs(System.currentTimeMillis() - random.nextLong()));
+        Date clarifiedBirthDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
         String address = "address" + random.nextInt(100000);
         String birthPlace = "city" + random.nextInt(100000);
         String occupation = "occupation" + random.nextInt(100000);
@@ -81,7 +86,7 @@ public class ChildrenGenerator {
 
     private Parent generateChildsParent(Child child) {
         BigInteger childId = child.getChildId();
-        ParentTypes parentType = ParentTypes.getParentTypeById(BigInteger.valueOf(random.nextInt(ParentTypes.values().length)));
+        ParentTypes parentType = ParentTypes.values()[random.nextInt(ParentTypes.values().length)];
         String parentName = "Parent " + parentType.toString() + " " + random.nextInt(100000);
         String parentInfo = "Info" + random.nextInt(100000) + random.nextInt(100000) + random.nextInt(100000);
         Parent parent = new ParentImpl.ParentBuilder(null, childId, parentType, parentName, parentInfo).buildParent();
@@ -92,7 +97,7 @@ public class ChildrenGenerator {
         BigInteger childId = child.getChildId();
         String detentionAdress = "Detention Address" + random.nextInt(1234567890);
         String detentionByWho = "Detention Guy" + random.nextInt(1234567890);
-        Date detentionDate = new Date(Math.abs(System.currentTimeMillis() - random.nextLong()));
+        Date detentionDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
         Detention detention = new DetentionImpl.DetentionBuilder(null, childId, detentionAdress, detentionDate, detentionByWho).buildDetention();
         return detention;
     }

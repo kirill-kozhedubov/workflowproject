@@ -1,5 +1,6 @@
 package iq.ven.workflow.common.configurations;
 
+import iq.ven.workflow.dao.UserDAO;
 import iq.ven.workflow.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
+    UserDAO userDAO;
 
     @Autowired
     public void registerGlobalAuthentication(AuthenticationManagerBuilder auth) throws Exception {
@@ -48,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .usernameParameter("j_username")
                 .passwordParameter("j_password")
                 // устанавливаем success handler для маппинга админа/юзера
-                .successHandler(new UrlAuthenticationSuccessHandler())
+                .successHandler(new UrlAuthenticationSuccessHandler(userDAO))
                 // даем доступ к форме логина всем
                 .permitAll();
 

@@ -8,7 +8,6 @@ import iq.ven.workflow.models.UserFile;
 import iq.ven.workflow.models.impl.UserFileImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.support.SqlLobValue;
@@ -30,26 +29,6 @@ public class FileDaoImpl implements FileDAO {
 
     @Autowired
     private JdbcTemplate generalTemplate;
-
-
-    public boolean giveUserAccessToFile(UserFile userFile, User user) {
-        try {
-            if (user != null && userFile != null) {
-               /* generalTemplate.update(INSERT_OBJREFERENCE_RELATION, PROJECT_SHARED_RELATION_ATTR_ID, user.getId(), project.getId());*/
-            } else {
-                return false;
-            }
-        } catch (DataAccessException e) {
-            LOGGER.error("Access to project (id: " + userFile.getFileId() + ", name: " + userFile.getFileName() +
-                    ") not granted to User (id: " + user.getUserId() + ", name: " + user.getFullName() + ")", e);
-            return false;
-        } catch (Exception e) {
-            LOGGER.error("Access to project (id: " + userFile.getFileId() + ", name: " + userFile.getFileName() +
-                    ") not granted to User (id: " + user.getUserId() + ", name: " + user.getFullName() + ")", e);
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public void insertUserFile(UserFile userFile) {

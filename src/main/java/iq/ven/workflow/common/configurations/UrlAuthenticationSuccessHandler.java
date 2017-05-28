@@ -1,9 +1,12 @@
 package iq.ven.workflow.common.configurations;
 
+import iq.ven.workflow.dao.UserDAO;
+import iq.ven.workflow.models.User;
 import iq.ven.workflow.models.UserTypes;
 import org.apache.log4j.Logger;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
@@ -19,6 +22,13 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     private static final Logger LOGGER = Logger.getLogger(UrlAuthenticationSuccessHandler.class);
 
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+
+    private UserDAO userDAO;
+
+    UrlAuthenticationSuccessHandler(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -72,6 +82,12 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        HttpSession session2 = request.getSession(true);
+        String principalName = authentication.getName();
+        User user = userDAO.getUserByEmail(principalName);
+        session2.setAttribute("userObject", user);
+
         HttpSession session = request.getSession(false);
         if (session == null) {
             return;
