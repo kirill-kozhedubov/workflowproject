@@ -13,7 +13,8 @@ public enum ParentTypes {
     AUNT("Тётя", IdList.AUNT),
     SISTER("Сестра", IdList.SISTER),
     BROTHER("Брат", IdList.BROTHER),
-    CUSTODIAN("Опекун", IdList.CUSTODIAN);
+    CUSTODIAN("Опекун", IdList.CUSTODIAN),
+    UNKNOWN("Неизвестно",IdList.UNKNOWN);
 
     private final String russianName;
     private final BigInteger dbId;

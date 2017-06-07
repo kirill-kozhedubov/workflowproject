@@ -4,7 +4,6 @@ import iq.ven.workflow.dao.ChildrenDAO;
 import iq.ven.workflow.models.*;
 import iq.ven.workflow.models.impl.ChildImpl;
 import iq.ven.workflow.models.impl.ClarifiedChildImpl;
-import iq.ven.workflow.models.impl.DetentionImpl;
 import iq.ven.workflow.models.impl.ParentImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -538,19 +537,6 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
-    private class DetentionRowMapper implements RowMapper<Detention> {
-        public Detention mapRow(ResultSet resultSet, int i) throws SQLException {
-            BigInteger detentionId = resultSet.getBigDecimal(DetentionColumnName.DETENTION_ID.toString()).toBigInteger();
-            BigInteger childId = resultSet.getBigDecimal(DetentionColumnName.CHILD_ID.toString()).toBigInteger();
-            String detentionBy = resultSet.getString(DetentionColumnName.DETENTIONED_BY.toString());
-            String detentionAddress = resultSet.getString(DetentionColumnName.DETENTION_ADDRESS.toString());
-            Date detentionDate = resultSet.getDate(DetentionColumnName.DETENTION_DATE.toString());
-
-            Detention detention = new DetentionImpl.DetentionBuilder(detentionId, childId,
-                    detentionAddress, detentionDate, detentionBy).buildDetention();
-            return detention;
-        }
-    }
 
 
     private enum ChildColumnName {
@@ -582,25 +568,6 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             return colName;
         }
 
-    }
-
-    private enum DetentionColumnName {
-        DETENTION_ID("detention_id"),
-        CHILD_ID("child_id"),
-        DETENTIONED_BY("detentioned_by"),
-        DETENTION_DATE("detention_date"),
-        DETENTION_ADDRESS("detention_address");
-
-        final private String colName;
-
-        DetentionColumnName(String colName) {
-            this.colName = colName;
-        }
-
-        @Override
-        public String toString() {
-            return colName;
-        }
     }
 
     private enum ParentColumnName {

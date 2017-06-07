@@ -1,6 +1,5 @@
 package iq.ven.workflow.models;
 
-import java.io.File;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -21,17 +20,16 @@ public interface Child {
 
     Date getBirthDate();
 
-    Districts getDistrict();
-
     List<Parent> getParents();
-
-    List<Detention> getDetentionList();
 
     String getPersonalRecordCode();
 
     Date getEntranceDate();
 
-    List<File> getChildFiles();
+    Date getRetiredDate();
 
+    List<ChildFile> getChildFiles();
+
+    byte[] getPhoto();
 
 }

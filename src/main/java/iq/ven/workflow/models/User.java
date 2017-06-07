@@ -2,6 +2,7 @@ package iq.ven.workflow.models;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 
 public interface User {
 
@@ -20,5 +21,7 @@ public interface User {
     Date getRegistrationDate();
 
     UserTypes getUsersRole();
+
+    List<UserFile> getFilesUserHaveAccessTo();
 
 }

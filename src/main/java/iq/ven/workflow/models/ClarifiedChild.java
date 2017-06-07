@@ -5,11 +5,9 @@ import java.util.Date;
 
 public interface ClarifiedChild {
 
-    boolean getBirthCertificatePresenceInfo();
+    BigInteger getClarifiedInfoId();
 
-    BigInteger getClarifiedInfoId(); //this id
-
-    BigInteger getChildId();  //child id
+    BigInteger getChildId();
 
     String getFirstName();
 
@@ -26,5 +24,15 @@ public interface ClarifiedChild {
     String getBirthPlace();
 
     String getOccupation();
+
+    String getWhereAndFromCame();
+
+    String getWhenWhereWhyAndByWhoBrought();
+
+    String getNotes();
+
+    String getDutyOfficer();
+
+    boolean wasPreviouslyJudgedOrDetained();
 
 }

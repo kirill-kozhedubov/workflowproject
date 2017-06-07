@@ -13,13 +13,7 @@ public interface IdList {
     BigInteger SISTER = BigInteger.valueOf(7L);
     BigInteger BROTHER = BigInteger.valueOf(8L);
     BigInteger CUSTODIAN = BigInteger.valueOf(9L);
-
-    /*  District id section  */
-    BigInteger MALINOVSKY = BigInteger.valueOf(1L);
-    BigInteger PRIMORSKY = BigInteger.valueOf(2L);
-    BigInteger KIEVSKY = BigInteger.valueOf(3L);
-    BigInteger SUVOROVSKY = BigInteger.valueOf(4L);
-
+    BigInteger UNKNOWN = BigInteger.valueOf(9L);
 
     /*  User roles id section  */
     BigInteger ADMIN = BigInteger.valueOf(1L);

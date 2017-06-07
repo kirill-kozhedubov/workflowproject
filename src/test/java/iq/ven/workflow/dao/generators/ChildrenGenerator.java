@@ -2,10 +2,12 @@ package iq.ven.workflow.dao.generators;
 
 import iq.ven.workflow.dao.ChildrenDAO;
 import iq.ven.workflow.dao.DaoTestClass;
-import iq.ven.workflow.models.*;
+import iq.ven.workflow.models.Child;
+import iq.ven.workflow.models.ClarifiedChild;
+import iq.ven.workflow.models.Parent;
+import iq.ven.workflow.models.ParentTypes;
 import iq.ven.workflow.models.impl.ChildImpl;
 import iq.ven.workflow.models.impl.ClarifiedChildImpl;
-import iq.ven.workflow.models.impl.DetentionImpl;
 import iq.ven.workflow.models.impl.ParentImpl;
 import org.apache.log4j.Logger;
 
@@ -35,16 +37,13 @@ public class ChildrenGenerator {
             LOGGER.info("Child I got from db: " + genChildFromDB);
 
             List<Parent> parents = new ArrayList<>();
-            List<Detention> detentions = new ArrayList<>();
+
 
             for (int j = 0; j < random.nextInt(3); j++) {
                 parents.add(childrenGenerator.generateChildsParent(genChildFromDB));
             }
-            for (int j = 0; j < random.nextInt(3); j++) {
-                detentions.add(childrenGenerator.generateChildsDetention(genChildFromDB));
-            }
 
-            childrenGenerator.saveGeneratedChildsDetentions(detentions, genChildFromDB);
+
             childrenGenerator.saveGeneratedChildsParents(parents, genChildFromDB);
             LOGGER.info("Child : " + genChild.getFullName() + " added to db, moving to next one.");
         }
@@ -61,7 +60,6 @@ public class ChildrenGenerator {
         String lastName = "Last" + random.nextInt(100000);
         String middleName = "Middle" + random.nextInt(100000);
         Date birthDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
-        Districts district = Districts.values()[random.nextInt(Districts.values().length)];
         String personalRecordCode = "code" + random.nextInt(500000) + random.nextBoolean();
         Date entranceDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
         boolean isBirthCertificatePresent = random.nextBoolean();
@@ -78,7 +76,6 @@ public class ChildrenGenerator {
                 .buildClarifiedChild();
 
         Child child = new ChildImpl.ChildBasicBuilder(null, firstName, lastName, middleName, birthDate, personalRecordCode, entranceDate)
-                .setDistrict(district)
                 .setClarifiedChild(clarifiedChild)
                 .buildChild();
         return child;
@@ -93,15 +90,6 @@ public class ChildrenGenerator {
         return parent;
     }
 
-    private Detention generateChildsDetention(Child child) {
-        BigInteger childId = child.getChildId();
-        String detentionAdress = "Detention Address" + random.nextInt(1234567890);
-        String detentionByWho = "Detention Guy" + random.nextInt(1234567890);
-        Date detentionDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
-        Detention detention = new DetentionImpl.DetentionBuilder(null, childId, detentionAdress, detentionDate, detentionByWho).buildDetention();
-        return detention;
-    }
-
     private Child saveGeneratedChild(Child child) {
         Child generateChild = childrenDAO.saveChildToDB(child);
         return generateChild;
@@ -113,12 +101,5 @@ public class ChildrenGenerator {
         }
 
     }
-
-    private void saveGeneratedChildsDetentions(List<Detention> detentions, Child child) {
-        for (Detention detention : detentions) {
-            childrenDAO.addDetentionToChild(child, detention);
-        }
-    }
-
 
 }
