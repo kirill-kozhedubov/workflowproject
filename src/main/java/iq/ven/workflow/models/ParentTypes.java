@@ -5,16 +5,14 @@ import iq.ven.workflow.common.IdList;
 import java.math.BigInteger;
 
 public enum ParentTypes {
-    MOTHER("Мать", IdList.MOTHER),
-    FATHER("Отец", IdList.FATHER),
-    GRANDMOTHER("Бабушка", IdList.GRANDMOTHER),
-    GRANDFATHER("Дедушка", IdList.GRANDFATHER),
-    UNCLE("Дядя", IdList.UNCLE),
-    AUNT("Тётя", IdList.AUNT),
-    SISTER("Сестра", IdList.SISTER),
-    BROTHER("Брат", IdList.BROTHER),
-    CUSTODIAN("Опекун", IdList.CUSTODIAN),
-    UNKNOWN("Неизвестно",IdList.UNKNOWN);
+    MOTHER("Мати", IdList.MOTHER),
+    FATHER("Батько", IdList.FATHER),
+    CUSTODIAN("Опікун", IdList.CUSTODIAN),
+    FIDUCIARY("Піклувальник", IdList.FIDUCIARY),
+    ADOPTIVE_PARENTS("Прийомні батьки", IdList.ADOPTIVE_PARENTS),
+    ADOPTER("Усиновлювач", IdList.ADOPTER),
+    OTHERS("Ініш", IdList.OTHERS);
+
 
     private final String russianName;
     private final BigInteger dbId;

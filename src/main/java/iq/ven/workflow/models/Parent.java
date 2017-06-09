@@ -1,6 +1,7 @@
 package iq.ven.workflow.models;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 public interface Parent {
 
@@ -13,5 +14,7 @@ public interface Parent {
     String getParentName();
 
     String getParentInfo();
+
+    Date getParentBirthDate();
 
 }

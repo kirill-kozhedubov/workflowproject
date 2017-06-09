@@ -11,7 +11,10 @@ public class ChildFileImpl implements ChildFile {
     private String fileName;
     private BigInteger childId;
 
-    public ChildFileImpl(ChildFileBuilder builder) {
+    public ChildFileImpl() {
+    }
+
+    private ChildFileImpl(ChildFileBuilder builder) {
         this.fileId = builder.fileId;
         this.file = builder.file;
         this.fileName = builder.fileName;
@@ -36,6 +39,22 @@ public class ChildFileImpl implements ChildFile {
     @Override
     public BigInteger getChildId() {
         return childId;
+    }
+
+    public void setFileId(BigInteger fileId) {
+        this.fileId = fileId;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public void setChildId(BigInteger childId) {
+        this.childId = childId;
     }
 
     public static class ChildFileBuilder {

@@ -32,4 +32,5 @@ public interface Child {
 
     byte[] getPhoto();
 
+
 }

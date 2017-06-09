@@ -1,6 +1,8 @@
 package iq.ven.workflow.models.impl;
 
 import iq.ven.workflow.models.ClarifiedChild;
+import iq.ven.workflow.models.Detention;
+import iq.ven.workflow.models.Districts;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -16,12 +18,13 @@ public class ClarifiedChildImpl implements ClarifiedChild {
     private String address;
     private String birthPlace;
     private String occupation;
-    private String whereAndFromCame;
-    private String whenWhereWhyAndByWhoBrought;
     private String notes;
     private String dutyOfficer;
-    private boolean wasPreviouslyJudgedOrDetained;
-
+    private String fromCame;
+    private Date whenCame;
+    private Detention detention;
+    private Districts district;
+    private String judgedOrDetainedInfo;
 
     public ClarifiedChildImpl() {
     }
@@ -36,11 +39,13 @@ public class ClarifiedChildImpl implements ClarifiedChild {
         this.address = builder.address;
         this.birthPlace = builder.birthPlace;
         this.occupation = builder.occupation;
-        this.whereAndFromCame = builder.whereAndFromCame;
-        this.whenWhereWhyAndByWhoBrought = builder.whenWhereWhyAndByWhoBrought;
         this.notes = builder.notes;
         this.dutyOfficer = builder.dutyOfficer;
-        this.wasPreviouslyJudgedOrDetained = builder.wasPreviouslyJudgedOrDetained;
+        this.fromCame = builder.fromCame;
+        this.whenCame = builder.whenCame;
+        this.detention = builder.detention;
+        this.district = builder.district;
+        this.judgedOrDetainedInfo = builder.judgedOrDetainedInfo;
 
     }
 
@@ -95,13 +100,28 @@ public class ClarifiedChildImpl implements ClarifiedChild {
     }
 
     @Override
-    public String getWhereAndFromCame() {
-        return whereAndFromCame;
+    public String getFromCame() {
+        return fromCame;
     }
 
     @Override
-    public String getWhenWhereWhyAndByWhoBrought() {
-        return whenWhereWhyAndByWhoBrought;
+    public Date getWhenCame() {
+        return whenCame;
+    }
+
+    @Override
+    public Detention getDetention() {
+        return detention;
+    }
+
+    @Override
+    public Districts getDistrict() {
+        return district;
+    }
+
+    @Override
+    public String getJudgedOrDetainedInfo() {
+        return judgedOrDetainedInfo;
     }
 
     @Override
@@ -114,10 +134,6 @@ public class ClarifiedChildImpl implements ClarifiedChild {
         return dutyOfficer;
     }
 
-    @Override
-    public boolean wasPreviouslyJudgedOrDetained() {
-        return wasPreviouslyJudgedOrDetained;
-    }
 
     public void setClarifiedInfoId(BigInteger clarifiedInfoId) {
         this.clarifiedInfoId = clarifiedInfoId;
@@ -155,14 +171,6 @@ public class ClarifiedChildImpl implements ClarifiedChild {
         this.occupation = occupation;
     }
 
-    public void setWhereAndFromCame(String whereAndFromCame) {
-        this.whereAndFromCame = whereAndFromCame;
-    }
-
-    public void setWhenWhereWhyAndByWhoBrought(String whenWhereWhyAndByWhoBrought) {
-        this.whenWhereWhyAndByWhoBrought = whenWhereWhyAndByWhoBrought;
-    }
-
     public void setNotes(String notes) {
         this.notes = notes;
     }
@@ -171,8 +179,24 @@ public class ClarifiedChildImpl implements ClarifiedChild {
         this.dutyOfficer = dutyOfficer;
     }
 
-    public void setWasPreviouslyJudgedOrDetained(boolean wasPreviouslyJudgedOrDetained) {
-        this.wasPreviouslyJudgedOrDetained = wasPreviouslyJudgedOrDetained;
+    public void setFromCame(String fromCame) {
+        this.fromCame = fromCame;
+    }
+
+    public void setWhenCame(Date whenCame) {
+        this.whenCame = whenCame;
+    }
+
+    public void setDetention(Detention detention) {
+        this.detention = detention;
+    }
+
+    public void setDistrict(Districts district) {
+        this.district = district;
+    }
+
+    public void setJudgedOrDetainedInfo(String judgedOrDetainedInfo) {
+        this.judgedOrDetainedInfo = judgedOrDetainedInfo;
     }
 
     public static class ClarifiedChildBuilder {
@@ -186,12 +210,13 @@ public class ClarifiedChildImpl implements ClarifiedChild {
         private String address;
         private String birthPlace;
         private String occupation;
-        private String whereAndFromCame;
-        private String whenWhereWhyAndByWhoBrought;
         private String notes;
         private String dutyOfficer;
-        private boolean wasPreviouslyJudgedOrDetained;
-
+        private String fromCame;
+        private Date whenCame;
+        private Detention detention;
+        private Districts district;
+        private String judgedOrDetainedInfo;
 
         public ClarifiedChildBuilder(BigInteger childId, String firstName,
                                      String lastName, String middleName, Date birthDate) {
@@ -223,16 +248,6 @@ public class ClarifiedChildImpl implements ClarifiedChild {
             return this;
         }
 
-        public ClarifiedChildBuilder buildWhereAndFromCame(String whereAndFromCame) {
-            this.whereAndFromCame = whereAndFromCame;
-            return this;
-        }
-
-        public ClarifiedChildBuilder buildWhenWhereWhyAndByWhoBrought(String whenWhereWhyAndByWhoBrought) {
-            this.whenWhereWhyAndByWhoBrought = whenWhereWhyAndByWhoBrought;
-            return this;
-        }
-
         public ClarifiedChildBuilder buildNotes(String notes) {
             this.notes = notes;
             return this;
@@ -243,11 +258,30 @@ public class ClarifiedChildImpl implements ClarifiedChild {
             return this;
         }
 
-        public ClarifiedChildBuilder buildWasPreviouslyJudgedOrDetained(boolean wasPreviouslyJudgedOrDetained) {
-            this.wasPreviouslyJudgedOrDetained = wasPreviouslyJudgedOrDetained;
+        public ClarifiedChildBuilder buildFromCame(String fromCame) {
+            this.fromCame = fromCame;
             return this;
         }
 
+        public ClarifiedChildBuilder buildWhenCame(Date whenCame) {
+            this.whenCame = whenCame;
+            return this;
+        }
+
+        public ClarifiedChildBuilder buildDetention(Detention detention) {
+            this.detention = detention;
+            return this;
+        }
+
+        public ClarifiedChildBuilder buildDistrict(Districts district) {
+            this.district = district;
+            return this;
+        }
+
+        public ClarifiedChildBuilder buildJudgedOrDetainedInfo(String judgedOrDetainedInfo) {
+            this.judgedOrDetainedInfo = judgedOrDetainedInfo;
+            return this;
+        }
 
         public ClarifiedChildImpl buildClarifiedChild() {
             return new ClarifiedChildImpl(this);
@@ -257,21 +291,6 @@ public class ClarifiedChildImpl implements ClarifiedChild {
 
     @Override
     public String toString() {
-        return "ClarifiedChildImpl{" +
-                "clarifiedInfoId=" + clarifiedInfoId +
-                ", childId=" + childId +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", middleName='" + middleName + '\'' +
-                ", birthDate=" + birthDate +
-                ", address='" + address + '\'' +
-                ", birthPlace='" + birthPlace + '\'' +
-                ", occupation='" + occupation + '\'' +
-                ", whereAndFromCame='" + whereAndFromCame + '\'' +
-                ", whenWhereWhyAndByWhoBrought='" + whenWhereWhyAndByWhoBrought + '\'' +
-                ", notes='" + notes + '\'' +
-                ", dutyOfficer='" + dutyOfficer + '\'' +
-                ", wasPreviouslyJudgedOrDetained=" + wasPreviouslyJudgedOrDetained +
-                '}';
+        return "ClarifiedChildImpl{";
     }
 }

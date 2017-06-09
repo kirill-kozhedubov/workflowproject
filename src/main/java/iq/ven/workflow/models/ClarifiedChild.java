@@ -25,14 +25,18 @@ public interface ClarifiedChild {
 
     String getOccupation();
 
-    String getWhereAndFromCame();
+    String getFromCame();
 
-    String getWhenWhereWhyAndByWhoBrought();
+    Date getWhenCame();
+
+    Detention getDetention();
+
+    Districts getDistrict();
+
+    String getJudgedOrDetainedInfo();
 
     String getNotes();
 
     String getDutyOfficer();
-
-    boolean wasPreviouslyJudgedOrDetained();
 
 }
