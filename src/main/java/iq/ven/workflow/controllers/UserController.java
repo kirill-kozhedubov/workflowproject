@@ -1,6 +1,6 @@
 package iq.ven.workflow.controllers;
 
-import iq.ven.workflow.controllers.requests.CreateFileRequest;
+import iq.ven.workflow.models.requests.CreateFileRequest;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class UserController {
 
     @Secured("ROLE_REGULAR_USER")
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String userDashboard(Model model) {
         return "Dashboard";
     }

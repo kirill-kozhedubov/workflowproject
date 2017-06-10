@@ -1,6 +1,6 @@
 package iq.ven.workflow.controllers;
 
-import iq.ven.workflow.controllers.requests.UserCreateRequest;
+import iq.ven.workflow.models.requests.UserCreateRequest;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

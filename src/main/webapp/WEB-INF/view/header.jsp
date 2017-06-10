@@ -1,9 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!--Navigation-->
-<div class="container">
-    <div class="row">
-        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar navbar-inverse navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
                     <a href="<c:url value="/" />" class="navbar-brand">
@@ -32,10 +30,7 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="page-wrap"></div>
 <div class="page-wrap"></div>
 
 <div class="container">

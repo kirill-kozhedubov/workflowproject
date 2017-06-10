@@ -26,7 +26,7 @@ public class JUnitTestDao {
     @Test
     public void someTest() {
         User user = userDAO.getUserById(BigInteger.valueOf(21));
-LOGGER.info("SELECTED " + user);
+        LOGGER.info("SELECTED " + user);
         Assert.assertEquals(1, 1);
     }
 

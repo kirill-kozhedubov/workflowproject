@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Пошук</title>
+    <title>Додати родича</title>
 
     <link rel="icon" href="<c:url value="/resources/images/index.ico"/>"/>
     <link href="<c:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet">
@@ -24,7 +24,7 @@
 <body>
 <jsp:include page="header.jsp"/>
 
-пошук
+Додати родича
 
 <jsp:include page="footer.jsp"/>
 

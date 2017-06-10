@@ -70,13 +70,15 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
             }
         }
 
-        if (isUser) {
+      /*  if (isUser) {
             return "/u/";
         } else if (isAdmin) {
             return "/admin/children";
         } else {
             throw new IllegalStateException();
-        }
+        }*/
+      //!TODO fix this
+      return "/";
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request) {

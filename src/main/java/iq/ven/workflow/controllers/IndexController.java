@@ -1,5 +1,6 @@
 package iq.ven.workflow.controllers;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ public class IndexController {
         return "index";
     }
 
+    @Secured("ROLE_ANONYMOUS")
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String logIn(Model model) {
         return "login";
