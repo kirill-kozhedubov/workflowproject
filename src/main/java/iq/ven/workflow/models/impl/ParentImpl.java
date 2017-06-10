@@ -55,7 +55,7 @@ public class ParentImpl implements Parent {
 
     @Override
     public Date getParentBirthDate() {
-        return null;
+        return parentBirthDate;
     }
 
     public void setParentId(BigInteger parentId) {

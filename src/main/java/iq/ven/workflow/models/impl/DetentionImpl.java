@@ -13,8 +13,7 @@ public class DetentionImpl implements Detention {
     private String detainedBy;
     private String gotDetainedFor;
 
-    public DetentionImpl(BigInteger detentionId, String detentionAddress, Date detentionDate, String detainedBy, String gotDetainedFor) {
-        this.detentionId = detentionId;
+    public DetentionImpl(String detentionAddress, Date detentionDate, String detainedBy, String gotDetainedFor) {
         this.detentionAddress = detentionAddress;
         this.detentionDate = detentionDate;
         this.detainedBy = detainedBy;
@@ -23,27 +22,27 @@ public class DetentionImpl implements Detention {
 
     @Override
     public BigInteger getDetentionId() {
-        return null;
+        return detentionId;
     }
 
     @Override
     public String getDetentionAddress() {
-        return null;
+        return detentionAddress;
     }
 
     @Override
     public Date getDetentionDate() {
-        return null;
+        return detentionDate;
     }
 
     @Override
     public String getDetainedBy() {
-        return null;
+        return detainedBy;
     }
 
     @Override
     public String getGotDetainedFor() {
-        return null;
+        return gotDetainedFor;
     }
 
     public void setDetentionId(BigInteger detentionId) {

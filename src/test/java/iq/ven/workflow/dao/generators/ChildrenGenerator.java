@@ -1,15 +1,19 @@
 package iq.ven.workflow.dao.generators;
 
+import io.codearte.jfairy.Fairy;
+import io.codearte.jfairy.producer.DateProducer;
+import io.codearte.jfairy.producer.person.Person;
+import io.codearte.jfairy.producer.person.PersonProperties;
+import io.codearte.jfairy.producer.text.TextProducer;
 import iq.ven.workflow.dao.ChildrenDAO;
 import iq.ven.workflow.dao.DaoTestClass;
-import iq.ven.workflow.models.Child;
-import iq.ven.workflow.models.ClarifiedChild;
-import iq.ven.workflow.models.Parent;
-import iq.ven.workflow.models.ParentTypes;
+import iq.ven.workflow.models.*;
 import iq.ven.workflow.models.impl.ChildImpl;
 import iq.ven.workflow.models.impl.ClarifiedChildImpl;
+import iq.ven.workflow.models.impl.DetentionImpl;
 import iq.ven.workflow.models.impl.ParentImpl;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -22,6 +26,9 @@ public class ChildrenGenerator {
     ChildrenDAO childrenDAO;
 
     Random random = new Random();
+    Fairy fairy = Fairy.create();
+    TextProducer textProducer = fairy.textProducer();
+    DateProducer dateProducer = fairy.dateProducer();
 
     public static void main(String[] args) {
         ChildrenGenerator childrenGenerator = new ChildrenGenerator();
@@ -32,7 +39,7 @@ public class ChildrenGenerator {
         LOGGER.info("Starging generation...");
         for (int i = 0; i < 100; i++) {
             Child genChild = childrenGenerator.generateChild();
-            LOGGER.info("genChild: " + genChild);
+          //  LOGGER.info("genChild: " + genChild);
             Child genChildFromDB = childrenGenerator.saveGeneratedChild(genChild);
             LOGGER.info("Child I got from db: " + genChildFromDB);
 
@@ -56,37 +63,69 @@ public class ChildrenGenerator {
     }
 
     private Child generateChild() {
-        String firstName = "First" + random.nextInt(100000);
-        String lastName = "Last" + random.nextInt(100000);
-        String middleName = "Middle" + random.nextInt(100000);
-        Date birthDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
-        String personalRecordCode = "code" + random.nextInt(500000) + random.nextBoolean();
-        Date entranceDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
-        boolean isBirthCertificatePresent = random.nextBoolean();
-        String clarifiedFirstName = "cFirst" + random.nextInt(100000);
-        String clarifiedLastName = "cLast" + random.nextInt(100000);
-        String clarifiedMiddleName = "cMiddle" + random.nextInt(100000);
-        Date clarifiedBirthDate = new Date(Math.abs(System.currentTimeMillis() - random.nextInt()));
-        String address = "address" + random.nextInt(100000);
-        String birthPlace = "city" + random.nextInt(100000);
-        String occupation = "occupation" + random.nextInt(100000);
+        Person person = fairy.person(PersonProperties.withMiddleName(textProducer.latinWord()));
 
-        ClarifiedChild clarifiedChild = new ClarifiedChildImpl.ClarifiedChildBuilder(isBirthCertificatePresent, null, null,
-                clarifiedFirstName, clarifiedLastName, clarifiedMiddleName, clarifiedBirthDate, address, birthPlace, occupation)
+        String personalRecordCode = random.nextInt() + "/" + random.nextInt();
+        Date entranceDate = dateProducer.randomDateBetweenYearAndNow(2007).toDate();
+        Date retireDate = dateProducer.randomDateBetweenTwoDates(new DateTime(entranceDate), DateTime.now()).toDate();
+        ;
+        byte[] photo = textProducer.latinSentence().getBytes();
+        String clarifiedFirstName = person.getFirstName() + "c";
+        String clarifiedLastName = person.getLastName() + "c";
+        String clarifiedMiddleName = person.getMiddleName() + "c";
+        Date clarifiedBirthDate = person.getDateOfBirth().toDate();
+        Districts district = Districts.values()[random.nextInt(Districts.values().length)];
+        String birthPlace = person.getAddress().getCity();
+        String basicFirstName = person.getFirstName() + "b";
+        String basicLastName = person.getLastName() + "b";
+        String basicMiddleName = person.getMiddleName() + "b";
+        Date basicBirthDate = person.getDateOfBirth().toDate();
+        String address = person.getAddress().toString();
+        String occupation = person.getCompany().getName();
+        String comeFromCity = person.getAddress().getCity();
+        Date comeFromDate = dateProducer.randomDateBetweenYears(2000, 2007).toDate();
+        String dutyOfficer = fairy.person().getFullName();
+        String judgedInfo = textProducer.paragraph(3);
+        String notes = textProducer.paragraph(3);
+
+        Person detentionPerson = fairy.person();
+        String detainedBy = detentionPerson.getFullName();
+        Date detainedWhen = dateProducer.randomDateInThePast(3).toDate();
+        String detainedWhy = textProducer.latinSentence(3);
+        String detainedWhere = detentionPerson.getAddress().getAddressLine1();
+
+        Detention detention = new DetentionImpl(detainedWhere, detainedWhen, detainedBy, detainedWhy);
+
+        ClarifiedChild clarifiedChildFull = new ClarifiedChildImpl.ClarifiedChildBuilder(null, clarifiedFirstName, clarifiedLastName, clarifiedMiddleName, clarifiedBirthDate)
+                .buildAddress(address)
+                .buildBirthPlace(birthPlace)
+                .buildDetention(detention)
+                .buildDistrict(district)
+                .buildOccupation(occupation)
+                .buildNotes(notes)
+                .buildDutyOfficer(dutyOfficer)
+                .buildFromCame(comeFromCity)
+                .buildWhenCame(comeFromDate)
+                .buildJudgedOrDetainedInfo(judgedInfo)
                 .buildClarifiedChild();
-
-        Child child = new ChildImpl.ChildBasicBuilder(null, firstName, lastName, middleName, birthDate, personalRecordCode, entranceDate)
-                .setClarifiedChild(clarifiedChild)
+        Child childFull = new ChildImpl.ChildBasicBuilder(basicFirstName, basicLastName, basicMiddleName, basicBirthDate, personalRecordCode, entranceDate)
+                .buildPhoto(photo)
+                .buildClarifiedChild(clarifiedChildFull)
+                .buildRetiredDate(retireDate)
+                .buildChildId(null)
                 .buildChild();
-        return child;
+        return childFull;
     }
 
     private Parent generateChildsParent(Child child) {
+        Person personParent = fairy.person();
         BigInteger childId = child.getChildId();
         ParentTypes parentType = ParentTypes.values()[random.nextInt(ParentTypes.values().length)];
-        String parentName = "Parent " + parentType.toString() + " " + random.nextInt(100000);
-        String parentInfo = "Info" + random.nextInt(100000) + random.nextInt(100000) + random.nextInt(100000);
-        Parent parent = new ParentImpl.ParentBuilder(null, childId, parentType, parentName, parentInfo).buildParent();
+        String parentName = personParent.getFullName();
+        String parentInfo = textProducer.latinSentence();
+        Date parentBirthDate = dateProducer.randomDateBetweenYearAndNow(1900).toDate();
+
+        Parent parent = new ParentImpl.ParentBuilder(childId, parentType, parentName).buildParentBirthDate(parentBirthDate).buildParentInfo(parentInfo).buildParent();
         return parent;
     }
 
@@ -97,7 +136,7 @@ public class ChildrenGenerator {
 
     private void saveGeneratedChildsParents(List<Parent> parents, Child child) {
         for (Parent parent : parents) {
-            childrenDAO.addParentToChild(child, parent);
+            childrenDAO.addParentToChild(child.getChildId(), parent);
         }
 
     }

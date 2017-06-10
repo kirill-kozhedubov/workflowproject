@@ -4,13 +4,13 @@ import iq.ven.workflow.dao.ChildrenDAO;
 import iq.ven.workflow.models.*;
 import iq.ven.workflow.models.impl.ChildImpl;
 import iq.ven.workflow.models.impl.ClarifiedChildImpl;
+import iq.ven.workflow.models.impl.DetentionImpl;
 import iq.ven.workflow.models.impl.ParentImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
@@ -23,24 +23,31 @@ import java.util.List;
 public class ChildrenDaoImpl implements ChildrenDAO {
     private static final Logger LOGGER = Logger.getLogger(ChildrenDaoImpl.class);
 
-
-    @Autowired
-    private SimpleJdbcCall simpleCallTemplate;
-
     @Autowired
     private JdbcTemplate generalTemplate;
 
     @Override
     public Child saveChildToDB(Child child) {
         try {
+            generalTemplate.update(INSERT_BASIC_CHILD, child.getFirstName(), child.getLastName(), child.getMiddleName(),
+                    child.getBirthDate(), child.getPersonalRecordCode(), child.getEntranceDate(), child.getRetiredDate(), child.getPhoto());
+            BigInteger childId = generalTemplate.queryForObject(SELECT_BASIC_CHILD_ID_BY_PERSONAL_RECORD_CODE, BigInteger.class, child.getPersonalRecordCode());
+
+            Detention detention = child.getClarifiedInfo().getDetention();
+            generalTemplate.update(INSERT_CHILD_DETENTION, detention.getDetainedBy(), detention.getDetentionDate(), detention.getDetentionAddress(), detention.getGotDetainedFor());
+            BigInteger detentionId = generalTemplate.queryForObject(SELECT_DETENTION_ID, BigInteger.class,
+                    detention.getDetentionDate(), detention.getGotDetainedFor());
 
 
-            //   generalTemplate.update(INSERT_BASIC_CHILD);
-            //    BigInteger childIdFromDb = generalTemplate.queryForObject(SELECT_BASIC_CHILD_ID_BY_PERSONAL_RECORD_CODE, BigInteger.class, personalRecordCode);
-            //   generalTemplate.update(INSERT_CLARIFIED_CHILD, childIdFromDb.longValue(), isBirthCertificatePresent, clarifiedFirstName, clarifiedLastName, clarifiedMiddleName, clarifiedBirthDate,
-            //          address, birthPlace, occupation);
+            ClarifiedChild clarifiedChild = child.getClarifiedInfo();
+            generalTemplate.update(INSERT_CLARIFIED_CHILD, childId.longValue(), clarifiedChild.getFirstName(), clarifiedChild.getLastName(),
+                    clarifiedChild.getMiddleName(), clarifiedChild.getBirthDate(), clarifiedChild.getAddress(), clarifiedChild.getBirthPlace(),
+                    clarifiedChild.getOccupation(), clarifiedChild.getFromCame(), clarifiedChild.getWhenCame(), clarifiedChild.getDutyOfficer(),
+                    clarifiedChild.getDistrict().getDbId().longValue(), clarifiedChild.getJudgedOrDetainedInfo(), clarifiedChild.getNotes(),
+                    detentionId.longValue());
 
-            return getChildById(BigInteger.ONE);
+
+            return getChildById(childId);
         } catch (DataAccessException e) {
             LOGGER.error("Error in inserting child to db with params  " + child, e);
             return null;
@@ -49,6 +56,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             return null;
         }
     }
+
 
     @Override
     public List<Child> getAllChildrenList() {
@@ -132,7 +140,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
 
     public List<Child> getChildrenByDistrict(Districts district) {
         try {
-            return generalTemplate.query(SELECT_CHILDREN_BY_DISTRICT, new Object[]{district.getDbId()}, new ChildrenCutRowMapper());
+            return generalTemplate.query(SELECT_CHILDREN_BY_DISTRICT, new Object[]{district.getDbId().longValue()}, new ChildrenCutRowMapper());
         } catch (DataAccessException e) {
             LOGGER.error("Error in fetching children by district " +
                     district.getDbId() + " " + district.name(), e);
@@ -173,68 +181,61 @@ public class ChildrenDaoImpl implements ChildrenDAO {
 
 
     @Override
-    public List<Parent> getChildParents(Child child) {
+    public List<Parent> getChildParents(BigInteger childId) {
         try {
-            return generalTemplate.query(SELECT_CHILD_PARENTS, new Object[]{child.getChildId().longValue()}, new ParentRowMapper());
+            return generalTemplate.query(SELECT_CHILD_PARENTS, new Object[]{childId.longValue()}, new ParentRowMapper());
         } catch (DataAccessException e) {
-            LOGGER.error("Error in fetching child's parents. " + child, e);
+            LOGGER.error("Error in fetching child's parents. id:" + childId, e);
             return null;
         } catch (Exception e) {
-            LOGGER.error("Error in fetching child's parents. " + child, e);
+            LOGGER.error("Error in fetching child's parents. id:" + childId, e);
             return null;
         }
     }
 
+
     @Override
-    public boolean addDetentionToChild(Child child, Detention detention) {
+    public boolean addParentToChild(BigInteger childId, Parent parent) {
         try {
-            if (child != null && detention != null) {
-                //       generalTemplate.update(INSERT_CHILD_DETENTION);
+            if (childId != null && parent != null) {
+                generalTemplate.update(INSERT_CHILD_PARENT,
+                        childId.longValue(), parent.getParentType().getDbId().longValue(), parent.getParentName(), parent.getParentInfo(), parent.getParentBirthDate());
                 return true;
             } else {
-                LOGGER.error("Error in adding detention to child because of nulls. CHILD:" + child + " DETENTION:" + detention);
+                LOGGER.error("Error in adding parent to child because of nulls. CHILD:" + childId + " PARENT:" + parent);
                 return false;
             }
         } catch (DataAccessException e) {
-            LOGGER.error("Error in adding detention to child. CHILD: " + child + " DETENTION:" + detention, e);
+            LOGGER.error("Error in adding parent to child. CHILD: " + childId + " PARENT:" + parent, e);
             return false;
         } catch (Exception e) {
-            LOGGER.error("Error in adding detention to child. CHILD: " + child + " DETENTION:" + detention, e);
+            LOGGER.error("Error in adding parent to child. CHILD: " + childId + " PARENT:" + parent, e);
             return false;
         }
     }
 
+
     @Override
-    public boolean addParentToChild(Child child, Parent parent) {
+    public boolean addFileToChild(BigInteger childId, ChildFile file) {
         try {
-            if (child != null && parent != null) {
-                //      generalTemplate.update(INSERT_CHILD_PARENT);
+            if (childId != null && file != null) {
+                generalTemplate.update(INSERT_CHILD_FILE, childId.longValue(), file.getFileName(), file.getFile());
                 return true;
             } else {
-                LOGGER.error("Error in adding parent to child because of nulls. CHILD:" + child + " PARENT:" + parent);
+                LOGGER.error("Error in adding file to child because of nulls. CHILD:" + childId + " FILE:" + file);
                 return false;
             }
         } catch (DataAccessException e) {
-            LOGGER.error("Error in adding parent to child. CHILD: " + child + " PARENT:" + parent, e);
+            LOGGER.error("Error in adding file to child. CHILD: " + childId + " FILE:" + file, e);
             return false;
         } catch (Exception e) {
-            LOGGER.error("Error in adding parent to child. CHILD: " + child + " PARENT:" + parent, e);
+            LOGGER.error("Error in adding file to child. CHILD: " + childId + " FILE:" + file, e);
             return false;
         }
     }
 
     @Override
-    public boolean addPhotoToChild(Child child, ChildFile file) {
-        return false;
-    }
-
-    @Override
-    public boolean addFileToChild(Child child, ChildFile file) {
-        return false;
-    }
-
-    @Override
-    public boolean deleteChild(Child child) {
+    public boolean deleteChild(BigInteger childId) {
         return false;
     }
 
@@ -285,116 +286,25 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             " JOIN detentions detentions ON clarified.detention_info_id = detentions.detention_id" +
             " WHERE basic.child_id = ?";
 
-    private static final String SELECT_CHILDREN_BY_FULL_NAME = "SELECT" +
-            " basic.child_id child_id," +
-            " basic.personal_record_code code," +
-            " basic.entrance_date entrance_date," +
-            " basic.retire_date retire_date," +
-            " basic.photo photo," +
-            " clarified.first_name cfirstn," +
-            " clarified.last_name clastn," +
-            " clarified.middle_name cmiddlen," +
-            " clarified.birth_date cbirth," +
-            " clarified.district_id district," +
-            " clarified.birth_place birth_place" +
-            " FROM children_basic_info basic" +
-            " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id" +
+    private static final String SELECT_CHILDREN_BY_FULL_NAME = SELECT_ALL_CHILDREN +
             " WHERE (clarified.last_name || ' ' || clarified.first_name) = ?";
 
-    private static final String SELECT_CHILDREN_BY_LAST_NAME = "SELECT" +
-            " basic.child_id child_id," +
-            " basic.personal_record_code code," +
-            " basic.entrance_date entrance_date," +
-            " basic.retire_date retire_date," +
-            " basic.photo photo," +
-            " clarified.first_name cfirstn," +
-            " clarified.last_name clastn," +
-            " clarified.middle_name cmiddlen," +
-            " clarified.birth_date cbirth," +
-            " clarified.district_id district," +
-            " clarified.birth_place birth_place" +
-            " FROM children_basic_info basic" +
-            " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id" +
+    private static final String SELECT_CHILDREN_BY_LAST_NAME = SELECT_ALL_CHILDREN +
             " WHERE clarified.last_name = ?";
 
-    private static final String SELECT_CHILDREN_BY_BIRTH_DATE = "SELECT" +
-            " basic.child_id child_id," +
-            " basic.personal_record_code code," +
-            " basic.entrance_date entrance_date," +
-            " basic.retire_date retire_date," +
-            " basic.photo photo," +
-            " clarified.first_name cfirstn," +
-            " clarified.last_name clastn," +
-            " clarified.middle_name cmiddlen," +
-            " clarified.birth_date cbirth," +
-            " clarified.district_id district," +
-            " clarified.birth_place birth_place" +
-            " FROM children_basic_info basic" +
-            " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id" +
+    private static final String SELECT_CHILDREN_BY_BIRTH_DATE = SELECT_ALL_CHILDREN +
             " WHERE clarified.birth_date = ?";
 
-    private static final String SELECT_CHILDREN_BY_BIRTH_YEAR = "SELECT" +
-            " basic.child_id child_id," +
-            " basic.personal_record_code code," +
-            " basic.entrance_date entrance_date," +
-            " basic.retire_date retire_date," +
-            " basic.photo photo," +
-            " clarified.first_name cfirstn," +
-            " clarified.last_name clastn," +
-            " clarified.middle_name cmiddlen," +
-            " clarified.birth_date cbirth," +
-            " clarified.district_id district," +
-            " clarified.birth_place birth_place" +
-            " FROM children_basic_info basic" +
-            " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id" +
+    private static final String SELECT_CHILDREN_BY_BIRTH_YEAR = SELECT_ALL_CHILDREN +
             " WHERE EXTRACT(YEAR FROM clarified.birth_date) = ?";
 
-    private static final String SELECT_CHILDREN_BY_DISTRICT = "SELECT" +
-            " basic.child_id child_id," +
-            " basic.personal_record_code code," +
-            " basic.entrance_date entrance_date," +
-            " basic.retire_date retire_date," +
-            " basic.photo photo," +
-            " clarified.first_name cfirstn," +
-            " clarified.last_name clastn," +
-            " clarified.middle_name cmiddlen," +
-            " clarified.birth_date cbirth," +
-            " clarified.district_id district," +
-            " clarified.birth_place birth_place" +
-            " FROM children_basic_info basic" +
-            " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id" +
+    private static final String SELECT_CHILDREN_BY_DISTRICT = SELECT_ALL_CHILDREN +
             " WHERE basic.district_id = ?";
 
-    private static final String SELECT_CHILD_BY_PERSONAL_RECORD_CODE = "SELECT" +
-            " basic.child_id child_id," +
-            " basic.personal_record_code code," +
-            " basic.entrance_date entrance_date," +
-            " basic.retire_date retire_date," +
-            " basic.photo photo," +
-            " clarified.first_name cfirstn," +
-            " clarified.last_name clastn," +
-            " clarified.middle_name cmiddlen," +
-            " clarified.birth_date cbirth," +
-            " clarified.district_id district," +
-            " clarified.birth_place birth_place" +
-            " FROM children_basic_info basic" +
-            " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id" +
+    private static final String SELECT_CHILD_BY_PERSONAL_RECORD_CODE = SELECT_ALL_CHILDREN +
             " WHERE basic.personal_record_code = ?";
 
-    private static final String SELECT_CHILDREN_ENTERED_IN_RANGE_OF_DATES = "SELECT" +
-            " basic.child_id child_id," +
-            " basic.personal_record_code code," +
-            " basic.entrance_date entrance_date," +
-            " basic.retire_date retire_date," +
-            " basic.photo photo," +
-            " clarified.first_name cfirstn," +
-            " clarified.last_name clastn," +
-            " clarified.middle_name cmiddlen," +
-            " clarified.birth_date cbirth," +
-            " clarified.district_id district," +
-            " clarified.birth_place birth_place" +
-            " FROM children_basic_info basic" +
-            " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id" +
+    private static final String SELECT_CHILDREN_ENTERED_IN_RANGE_OF_DATES = SELECT_ALL_CHILDREN +
             " WHERE basic.entrance_date BETWEEN ? AND ?";
 
 
@@ -403,15 +313,90 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             " FROM parents " +
             " WHERE child_id = ?";
 
-    private static final String INSERT_CHILD_DETENTION = "";
+    private static final String INSERT_CHILD_DETENTION = "INSERT INTO " +
+            " detentions(detention_by, detention_when, detention_where, detention_why) " +
+            " VALUES(?,?,?,?)";
 
     private static final String INSERT_CHILD_PARENT = "INSERT INTO " +
             " parents (child_id, parent_type_id, parent_name, parent_info, parent_birth_date) " +
             " VALUES (?, ?, ?, ?, ?)";
 
+    private static final String INSERT_CHILD_FILE = "INSERT INTO " +
+            " children_files (child_id, file_name, file_blob) " +
+            " VALUES (?, ?, ?)";
+
+
+    private static final String INSERT_BASIC_CHILD = "INSERT INTO" +
+            " children_basic_info(first_name, last_name, middle_name, birth_date, personal_record_code, entrance_date, retire_date, photo)" +
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+    private static final String INSERT_CLARIFIED_CHILD = "INSERT INTO children_clarified_info(" +
+            " child_id, first_name, last_name, middle_name, birth_date, address, birth_place, occupation, comes_from_city, " +
+            " comes_from_date, duty_officer, district_id, judged_or_detained_info, child_notes,  detention_info_id)" +
+            " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?)";
+
+    private static final String SELECT_BASIC_CHILD_ID_BY_PERSONAL_RECORD_CODE = "SELECT child_id FROM children_basic_info " +
+            " WHERE personal_record_code = ?";
+
+    private static final String SELECT_DETENTION_ID = "SELECT detention_id" +
+            " FROM detentions" +
+            " WHERE detention_when = ?" +
+            " AND  detention_why = ?" +
+            " and detention_id > (select MAX(detention_id)-1 from detentions)";
+
+
     private class ChildrenFullRowMapper implements RowMapper<Child> {
         public Child mapRow(ResultSet rs, int i) throws SQLException {
-            Child childFull = null;
+            BigInteger childId = rs.getBigDecimal(ChildColumnName.CHILD_ID.toString()).toBigInteger();
+            String personalRecordCode = rs.getString(ChildColumnName.PERSONA_RECORD_CODE.toString());
+            Date entranceDate = rs.getDate(ChildColumnName.ENTRANCE_DATE.toString());
+            Date retireDate = rs.getDate(ChildColumnName.RETIRE_DATE.toString());
+            byte[] photo = rs.getBytes(ChildColumnName.PHOTO.toString());
+            String clarifiedFirstName = rs.getString(ChildColumnName.CLARIFIED_FIRST_NAME.toString());
+            String clarifiedLastName = rs.getString(ChildColumnName.CLARIFIED_LAST_NAME.toString());
+            String clarifiedMiddleName = rs.getString(ChildColumnName.CLARIFIED_MIDDLE_NAME.toString());
+            Date clarifiedBirthDate = rs.getDate(ChildColumnName.CLARIFIED_BIRTH_DATE.toString());
+            BigInteger districtId = rs.getBigDecimal(ChildColumnName.DISTRICT.toString()).toBigInteger();
+            String birthPlace = rs.getString(ChildColumnName.BIRTH_PLACE.toString());
+            String basicFirstName = rs.getString(ChildColumnName.BASIC_FIRST_NAME.toString());
+            String basicLastName = rs.getString(ChildColumnName.BASIC_LAST_NAME.toString());
+            String basicMiddleName = rs.getString(ChildColumnName.BASIC_MIDDLE_NAME.toString());
+            Date basicBirthDate = rs.getDate(ChildColumnName.BASIC_BIRTH_DATE.toString());
+            String address = rs.getString(ChildColumnName.ADDRESS.toString());
+            String occupation = rs.getString(ChildColumnName.OCCUPATION.toString());
+            String comeFromCity = rs.getString(ChildColumnName.COME_FROM_CITY.toString());
+            Date comeFromDate = rs.getDate(ChildColumnName.COME_FROM_DATE.toString());
+            String dutyOfficer = rs.getString(ChildColumnName.DISTRICT.toString());
+            String judgedInfo = rs.getString(ChildColumnName.JUDGED_INFO.toString());
+            String notes = rs.getString(ChildColumnName.NOTES.toString());
+            String detainedBy = rs.getString(ChildColumnName.DETAINED_BY_WHO.toString());
+            Date detainedWhen = rs.getDate(ChildColumnName.DETAINED_WHEN_DATE.toString());
+            String detainedWhy = rs.getString(ChildColumnName.DETAINED_WHY_REASON.toString());
+            String detainedWhere = rs.getString(ChildColumnName.DETAINED_WHERE_PLACE.toString());
+
+            Districts district = Districts.getDistrictById(districtId);
+
+
+            Detention detention = new DetentionImpl(detainedWhere, detainedWhen, detainedBy, detainedWhy);
+
+            ClarifiedChild clarifiedChildFull = new ClarifiedChildImpl.ClarifiedChildBuilder(childId, clarifiedFirstName, clarifiedLastName, clarifiedMiddleName, clarifiedBirthDate)
+                    .buildAddress(address)
+                    .buildBirthPlace(birthPlace)
+                    .buildDetention(detention)
+                    .buildDistrict(district)
+                    .buildOccupation(occupation)
+                    .buildNotes(notes)
+                    .buildDutyOfficer(dutyOfficer)
+                    .buildFromCame(comeFromCity)
+                    .buildWhenCame(comeFromDate)
+                    .buildJudgedOrDetainedInfo(judgedInfo)
+                    .buildClarifiedChild();
+            Child childFull = new ChildImpl.ChildBasicBuilder(basicFirstName, basicLastName, basicMiddleName, basicBirthDate, personalRecordCode, entranceDate)
+                    .buildPhoto(photo)
+                    .buildClarifiedChild(clarifiedChildFull)
+                    .buildRetiredDate(retireDate)
+                    .buildChildId(childId)
+                    .buildChild();
             return childFull;
         }
     }

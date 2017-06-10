@@ -18,7 +18,7 @@ public interface UserDAO {
 
     List<User> getAllUsersThatHaveAccessToFile(UserFile file);
 
-    User createUser(String email, String firstName, String lastName, String password);
+    User createUser(User user);
 
     boolean deleteUser(User user);
 

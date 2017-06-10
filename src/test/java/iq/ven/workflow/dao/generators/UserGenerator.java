@@ -1,5 +1,7 @@
 package iq.ven.workflow.dao.generators;
 
+import io.codearte.jfairy.Fairy;
+import io.codearte.jfairy.producer.person.Person;
 import iq.ven.workflow.dao.DaoTestClass;
 import iq.ven.workflow.dao.UserDAO;
 import iq.ven.workflow.models.User;
@@ -14,16 +16,13 @@ public class UserGenerator {
     UserDAO userDAO;
 
     Random random = new Random();
-
+    Fairy fairy = Fairy.create();
 
     public static void main(String[] args) {
         UserGenerator userGenerator = new UserGenerator();
         userGenerator.setupdao();
         LOGGER.info("DAO setup completed");
-        Random random = new Random();
-
         LOGGER.info("Starging generation...");
-
         for (int i = 0; i < 200; i++) {
             User u = userGenerator.generateUser();
             userGenerator.saveUser(u);
@@ -37,16 +36,19 @@ public class UserGenerator {
     }
 
     private User generateUser() {
-        String firstName = "uFirstName" + random.nextInt();
-        String lastName = "uLastName" + random.nextInt();
-        String email = "uEmail@email." + random.nextInt();
-        String password = "passwordinho" + random.nextInt();
+        Person person = fairy.person();
+
+        String firstName = person.getFirstName();
+        String lastName = person.getLastName();
+        String email = (random.nextInt(2) >= 1 ? person.getFirstName() : person.getLastName()
+                + random.nextInt(3000) + "@mail" + fairy.baseProducer().randomBetween('a', 'z') + "." + person.getCompany().getDomain()).toLowerCase();
+        String password = person.getPassword();
         UserTypes userType = UserTypes.values()[random.nextInt(UserTypes.values().length)];
-        User user = new UserImpl.UserBuilder(null, firstName, lastName, email, password, null, userType).buildUser();
+        User user = new UserImpl.UserBuilder(firstName, lastName, email, password, userType).buildUser();
         return user;
     }
 
     private void saveUser(User user) {
-        userDAO.createUser(user.getEmail(), user.getFirstName(), user.getLastName(), user.getPassword());
+        userDAO.createUser(user);
     }
 }

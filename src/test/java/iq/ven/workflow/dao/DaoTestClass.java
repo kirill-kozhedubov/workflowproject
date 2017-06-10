@@ -56,11 +56,9 @@ public class DaoTestClass {
 
         Field jdbcTemplateU = null;
         Field jdbcTemplateF = null;
-        Field simpleCallC = null;
         Field jdbcTemplateC = null;
 
         try {
-            simpleCallC = classC.getDeclaredField("simpleCallTemplate");
             jdbcTemplateC = classC.getDeclaredField("generalTemplate");
             jdbcTemplateU = classU.getDeclaredField("generalTemplate");
             jdbcTemplateF = classF.getDeclaredField("generalTemplate");
@@ -68,13 +66,11 @@ public class DaoTestClass {
             e.printStackTrace();
         }
 
-        simpleCallC.setAccessible(true);
         jdbcTemplateC.setAccessible(true);
         jdbcTemplateU.setAccessible(true);
         jdbcTemplateF.setAccessible(true);
 
         try {
-            simpleCallC.set(childrenDao, simpleCallTemplate);
             jdbcTemplateC.set(childrenDao, generalTemplate);
             jdbcTemplateU.set(userDao, generalTemplate);
             jdbcTemplateF.set(fileDao, generalTemplate);

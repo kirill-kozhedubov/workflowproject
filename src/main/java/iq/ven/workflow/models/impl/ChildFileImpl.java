@@ -80,5 +80,12 @@ public class ChildFileImpl implements ChildFile {
 
     }
 
-
+    @Override
+    public String toString() {
+        return "ChildFileImpl{" +
+                "fileId=" + fileId +
+                ", fileName='" + fileName + '\'' +
+                ", childId=" + childId +
+                '}';
+    }
 }

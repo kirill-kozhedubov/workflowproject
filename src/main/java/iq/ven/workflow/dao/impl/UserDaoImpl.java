@@ -6,6 +6,7 @@ import iq.ven.workflow.models.UserFile;
 import iq.ven.workflow.models.UserTypes;
 import iq.ven.workflow.models.impl.UserImpl;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -85,20 +86,18 @@ public class UserDaoImpl implements UserDAO {
     }
 
     @Override
-    public User createUser(String email, String firstName, String lastName, String password) {
+    public User createUser(User user) {
         try {
-            Date registrationDate = new Date();
-            UserTypes userRole = UserTypes.REGULAR_USER;
-            User user = new UserImpl.UserBuilder(null, firstName, lastName, email, password, registrationDate, userRole).buildUser();
-            generalTemplate.update(INSERT_USER, email, firstName, lastName, password, registrationDate, userRole.getRoleId().longValue());
-            return user;
+            generalTemplate.update(INSERT_USER, user.getEmail(), user.getFirstName(), user.getLastName(), user.getPassword(), DateTime.now().toDate(), user.getUsersRole().getRoleId().longValue());
+
+            return getUserByEmail(user.getEmail());
         } catch (DataAccessException e) {
-            LOGGER.error("Error in creating user with params Email:" + email +
-                    " FirstName:" + firstName + " LastName:" + lastName + " Password:" + password, e);
+            LOGGER.error("Error in creating user with params Email:" + user.getEmail() +
+                    " FirstName:" + user.getFirstName() + " LastName:" + user.getLastName() + " Password:" + user.getPassword(), e);
             return null;
         } catch (Exception e) {
-            LOGGER.error("Error in creating user with params Email:" + email +
-                    " FirstName:" + firstName + " LastName:" + lastName + " Password:" + password, e);
+            LOGGER.error("Error in creating user with params Email:" + user.getEmail() +
+                    " FirstName:" + user.getFirstName() + " LastName:" + user.getLastName() + " Password:" + user.getPassword(), e);
             return null;
         }
     }
@@ -155,7 +154,6 @@ public class UserDaoImpl implements UserDAO {
 
     private class UserRowMapper implements RowMapper<User> {
         public User mapRow(ResultSet resultSet, int i) throws SQLException {
-            User user = null;
 
             BigInteger userId = resultSet.getBigDecimal(UserColumnName.USER_ID.toString()).toBigInteger();
             String email = resultSet.getString(UserColumnName.EMAIL.toString());
@@ -167,7 +165,10 @@ public class UserDaoImpl implements UserDAO {
             BigInteger rights = resultSet.getBigDecimal(UserColumnName.RIGHTS.toString()).toBigInteger();
             UserTypes role = UserTypes.getRoleById(rights);
 
-            user = new UserImpl.UserBuilder(userId, firstName, lastName, email, password, registrationDate, role).buildUser();
+            User user = new UserImpl.UserBuilder(firstName, lastName, email, password, role)
+                    .buildRegistrationDate(registrationDate)
+                    .buildUserId(userId)
+                    .buildUser();
             return user;
         }
     }

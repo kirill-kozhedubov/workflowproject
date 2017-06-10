@@ -38,16 +38,12 @@ public interface ChildrenDAO {
 
     List<Child> getChildrenEnteredInRangeOfDates(Date after, Date before);
 
-    List<Parent> getChildParents(Child child);
+    List<Parent> getChildParents(BigInteger childId);
 
-    boolean addDetentionToChild(Child child, Detention detention);
+    boolean addParentToChild(BigInteger childId, Parent parent);
 
-    boolean addParentToChild(Child child, Parent parent);
+    boolean addFileToChild(BigInteger childId, ChildFile file);
 
-    boolean addPhotoToChild(Child child, ChildFile file);
-
-    boolean addFileToChild(Child child, ChildFile file);
-
-    boolean deleteChild(Child child);
+    boolean deleteChild(BigInteger childId);
 
 }

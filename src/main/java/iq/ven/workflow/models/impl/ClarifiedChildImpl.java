@@ -291,6 +291,23 @@ public class ClarifiedChildImpl implements ClarifiedChild {
 
     @Override
     public String toString() {
-        return "ClarifiedChildImpl{";
+        return "ClarifiedChildImpl{" +
+                "clarifiedInfoId=" + clarifiedInfoId +
+                ", childId=" + childId +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", birthDate=" + birthDate +
+                ", address='" + address + '\'' +
+                ", birthPlace='" + birthPlace + '\'' +
+                ", occupation='" + occupation + '\'' +
+                ", notes='" + notes + '\'' +
+                ", dutyOfficer='" + dutyOfficer + '\'' +
+                ", fromCame='" + fromCame + '\'' +
+                ", whenCame=" + whenCame +
+                ", detention=" + detention +
+                ", district=" + district +
+                ", judgedOrDetainedInfo='" + judgedOrDetainedInfo + '\'' +
+                '}';
     }
 }
