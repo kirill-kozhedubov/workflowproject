@@ -63,11 +63,9 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
         for (GrantedAuthority grantedAuthority : authorities) {
             if (grantedAuthority.getAuthority().equals(UserTypes.REGULAR_USER.toString())) {
                 isUser = true;
-                LOGGER.info("user connected");
                 break;
             } else if (grantedAuthority.getAuthority().equals(UserTypes.ADMIN.toString())) {
                 isAdmin = true;
-                LOGGER.info("admin connected");
                 break;
             }
         }

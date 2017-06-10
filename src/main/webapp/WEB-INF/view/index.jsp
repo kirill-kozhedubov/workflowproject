@@ -11,48 +11,43 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Spring Security</title>
+    <title>Головна</title>
 
-    <link href="<c:url value="/resources/css/bootstrap.min.css" />" rel="stylesheet">
+    <link rel="icon" href="<c:url value="/resources/images/index.ico"/>"/>
+    <link href="<c:url value="/resources/css/bootstrap.min.css"/>" rel="stylesheet">
+    <link href="<c:url value="/resources/css/custom-styles.css"/>" rel="stylesheet">
+    <script src="<c:url value="/resources/js/jquery-3.2.1.min.js"/>"></script>
+    <script src="<c:url value="/resources/js/bootstrap.min.js"/>"></script>
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
+
 </head>
 
 <body>
+<sec:authorize access="!isAuthenticated()">
+    <p><a class="btn btn-lg btn-success" href="<c:url value="/login" />" role="button">Войти</a></p>
+</sec:authorize>
+<sec:authorize access="isAuthenticated()">
+    <jsp:include page="header.jsp"/>
 
-<div class="container">
 
     <div class="jumbotron" style="margin-top: 20px;">
         <h1>WORKFLOW.com</h1>
         <p class="lead">
             WORKFLOW
         </p>
-        <sec:authorize access="!isAuthenticated()">
-            <p><a class="btn btn-lg btn-success" href="<c:url value="/login" />" role="button">Войти</a></p>
-        </sec:authorize>
-        <sec:authorize access="isAuthenticated()">
-            <p>Ваш логин: <sec:authentication property="principal.username" /></p>
-            <p><a class="btn btn-lg btn-danger" href="<c:url value="/logout" />" role="button">Выйти</a></p>
 
-            <p><a class="btn btn-default" href="<c:url value="/admin/add-child" />" role="button">A: add child</a></p>
-            <p><a class="btn btn-default" href="<c:url value="/admin/children" />" role="button">A: view children</a></p>
-            <p><a class="btn btn-default" href="<c:url value="/admin/user-create" />" role="button">A: user create</a></p>
 
-            <p><a class="btn btn-default" href="<c:url value="/u" />" role="button">U/A: dashboard</a></p>
-            <p><a class="btn btn-default" href="<c:url value="/u/share-file" />" role="button">U/A: share file</a></p>
-            <p><a class="btn btn-default" href="<c:url value="/u/download-file" />" role="button">U/A: download file</a></p>
-            <p><a class="btn btn-default" href="<c:url value="/u/add-file" />" role="button">U/A: add file</a></p>
-        </sec:authorize>
+        <p>Ваш логин: <sec:authentication property="principal.username"/></p>
+        <p><a class="btn btn-lg btn-danger" href="<c:url value="/logout" />" role="button">Выйти</a></p>
+
     </div>
 
     <div class="footer">
         <p>© WORKFLOW 2017</p>
     </div>
 
-</div>
+
+    <jsp:include page="footer.jsp"/>
+</sec:authorize>
 </body>
 </html>

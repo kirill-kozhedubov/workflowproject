@@ -33,7 +33,7 @@ public class ChildrenController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = "/children", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     public String viewAndSearchChildren(Model model, ChildrenSearchRequest childrenSearchRequest) {
         return "ViewAndSearchChildren";
     }

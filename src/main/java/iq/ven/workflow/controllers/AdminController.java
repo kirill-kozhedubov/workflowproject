@@ -19,7 +19,7 @@ public class AdminController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = "/user/create", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/save-user", method = RequestMethod.GET)
     @ResponseBody
     public String createUserPost(Model model, UserCreateRequest userCreateRequest) {
         return "successful";
