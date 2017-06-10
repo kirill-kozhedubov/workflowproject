@@ -1,2 +1,0 @@
-insert into children_basic_info (first_name, last_name, middle_name, birth_date, district_id, personal_record_code, entrance_date)
-values ('Firstname', 'Lastname', 'Middlename', to_date('2007-09-01', 'YYYY-MM-DD'), 3, 'randomPersonalRecordCode', to_date('2015-09-01', 'YYYY-MM-DD'));
