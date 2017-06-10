@@ -25,6 +25,7 @@ public class UserGenerator {
         LOGGER.info("Starging generation...");
         for (int i = 0; i < 200; i++) {
             User u = userGenerator.generateUser();
+            LOGGER.info("User generated " + u);
             userGenerator.saveUser(u);
         }
 
@@ -40,7 +41,7 @@ public class UserGenerator {
 
         String firstName = person.getFirstName();
         String lastName = person.getLastName();
-        String email = (random.nextInt(2) >= 1 ? person.getFirstName() : person.getLastName()
+        String email = ((random.nextInt(2) >= 1 ? person.getFirstName() : person.getLastName())
                 + random.nextInt(3000) + "@mail" + fairy.baseProducer().randomBetween('a', 'z') + "." + person.getCompany().getDomain()).toLowerCase();
         String password = person.getPassword();
         UserTypes userType = UserTypes.values()[random.nextInt(UserTypes.values().length)];
