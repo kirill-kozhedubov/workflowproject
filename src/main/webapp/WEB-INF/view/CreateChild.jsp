@@ -25,7 +25,7 @@
 <jsp:include page="header.jsp"/>
 <c:url value="/children/save" var="save"/>
 <div class="page-title">Додання особової справи до бази</div>
-<form:form class="form-horizontal" modelAttribute="child" action="${save}" method="post" enctype="multipart/form-data">
+<form:form class="form-horizontal" modelAttribute="child" action="${save}" method="post">
 
     <fieldset>
         <div class="section-title">Основна інформація</div>
@@ -92,12 +92,7 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <label for="inputPhoto" class="col-sm-2 control-label">Фото</label>
-            <div class="col-sm-10">
-                <form:input type="file" accept=".jpg, .jpeg, .png, .bmp" path="photo" id="inputPhoto"/>
-            </div>
-        </div>
+
 
         <div class="section-title">Уточнені відомості</div>
 
@@ -133,7 +128,7 @@
         <div class="section-title-little">дитини, влаштованої в КУ "Центр СПРД ОМР Одеської області"</div>
 
         <div class="form-group">
-            <label for="inputDistrict" class="col-sm-2 control-label">Район</label>
+            <label for="inputDistrict" class="col-sm-2 control-label">Район<span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:select class="form-control" id="inputDistrict" path="district">
                     <c:forEach items="${districts}" var="entry">
@@ -180,7 +175,7 @@
         <div class="section-title-little">Інформація про затримання та доставлення до центру</div>
 
         <div class="form-group">
-            <label class="col-sm-4 control-label">Коли затриманий і ким доставлений до центра</label>
+            <label class="col-sm-4 control-label">Коли затриманий і ким доставлений до центра<span class="red-star">*</span></label>
             <div class="col-sm-4">
                 <form:input path="detainedBy" type="text" class="form-control"
                             placeholder="Ким доставлений"/>
@@ -192,7 +187,7 @@
         </div>
 
         <div class="form-group">
-            <label for="inputDetentionAddress" class="col-sm-2 control-label">Де затриманий</label>
+            <label for="inputDetentionAddress" class="col-sm-2 control-label">Де затриманий<span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="detentionAddress" type="text" class="form-control" id="inputDetentionAddress"
                             placeholder="Де затриманий"/>
@@ -200,7 +195,7 @@
         </div>
 
         <div class="form-group">
-            <label for="inputDetainedFor" class="col-sm-2 control-label">За що затриманий</label>
+            <label for="inputDetainedFor" class="col-sm-2 control-label">За що затриманий<span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:textarea path="detainedFor" type="text" class="form-control" id="inputDetainedFor"
                                placeholder="За що затриманий" rows="3"/>
@@ -229,7 +224,7 @@
         </div>
 
         <div class="form-group">
-            <label for="inputDutyOfficer" class="col-sm-2 control-label">Черговий з режиму</label>
+            <label for="inputDutyOfficer" class="col-sm-2 control-label">Черговий з режиму<span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="dutyOfficer" type="text" class="form-control" id="inputDutyOfficer"
                             placeholder="Черговий з режиму" />

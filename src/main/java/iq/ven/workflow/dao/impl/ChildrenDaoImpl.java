@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.sql.ResultSet;
@@ -216,28 +217,54 @@ public class ChildrenDaoImpl implements ChildrenDAO {
 
 
     @Override
-    public boolean addFileToChild(BigInteger childId, ChildFile file) {
+    public boolean addFileToChild(BigInteger childId, MultipartFile file) {
         try {
             if (childId != null && file != null) {
-                generalTemplate.update(INSERT_CHILD_FILE, childId.longValue(), file.getFileName(), file.getFile());
+                generalTemplate.update(INSERT_CHILD_FILE, childId.longValue(), file.getOriginalFilename(), file.getBytes());
                 return true;
             } else {
-                LOGGER.error("Error in adding file to child because of nulls. CHILD:" + childId + " FILE:" + file);
+                LOGGER.error("Error in adding file to child because of nulls. CHILD:" + childId + " FILE:" + file.getOriginalFilename() + " size:" + file.getSize());
                 return false;
             }
         } catch (DataAccessException e) {
-            LOGGER.error("Error in adding file to child. CHILD: " + childId + " FILE:" + file, e);
+            LOGGER.error("Error in adding file to child.CHILD:" + childId + " FILE:" + file.getOriginalFilename() + " size:" + file.getSize(), e);
             return false;
         } catch (Exception e) {
-            LOGGER.error("Error in adding file to child. CHILD: " + childId + " FILE:" + file, e);
+            LOGGER.error("Error in adding file to child. CHILD:" + childId + " FILE:" + file.getOriginalFilename() + " size:" + file.getSize(), e);
             return false;
         }
     }
 
     @Override
     public boolean deleteChild(BigInteger childId) {
+        //!TODO delete parents
+        //!TODO delete files
+        //!TODO delete clarified
+        //!TODO delete child
         return false;
     }
+
+    @Override
+    public boolean updateChildsPhoto(BigInteger childId, MultipartFile photo) {
+        try {
+            if (childId != null && photo != null) {
+                generalTemplate.update(UPDATE_CHILDS_PHOTO, photo.getBytes(), childId.longValue());
+                LOGGER.info("photo updated to " + photo.getOriginalFilename());
+                return true;
+            } else {
+                LOGGER.error("Error in adding file to child because of nulls. CHILD:" + childId + " FILE:" + photo.getOriginalFilename() + " bytes size :" + photo.getSize());
+                return false;
+            }
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in adding file to child id:" + childId + " FILE:" + photo.getOriginalFilename() + " bytes size :" + photo.getSize(), e);
+            return false;
+        } catch (Exception e) {
+            LOGGER.error("Error in adding file to child id:" + childId + " FILE:" + photo.getOriginalFilename() + " bytes size :" + photo.getSize(), e);
+            return false;
+        }
+    }
+
+    private static final String UPDATE_CHILDS_PHOTO = "UPDATE children_basic_info SET photo = ? WHERE child_id = ?";
 
     private static final String SELECT_ALL_CHILDREN = "SELECT" +
             " basic.child_id child_id," +
@@ -342,7 +369,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             " FROM detentions" +
             " WHERE detention_when = ?" +
             " AND  detention_why = ?" +
-            " and detention_id > (select MAX(detention_id)-1 from detentions)";
+            " AND detention_id > (SELECT MAX(detention_id)-1 FROM detentions)";
 
 
     private class ChildrenFullRowMapper implements RowMapper<Child> {

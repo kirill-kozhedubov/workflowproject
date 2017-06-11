@@ -24,9 +24,53 @@
 <body>
 <jsp:include page="header.jsp"/>
 
-Завантажити файли дитини
+<form class="form-horizontal" role="form" method="POST" action="<c:out value="/children/upload-files-post"/>"
+      enctype="multipart/form-data">
 
+
+    <div class="form-group file-section-photo">
+        <label for="inputPhoto" class="col-sm-2 control-label">Фото (якщо вже є - перезаписується)</label>
+        <div class="col-sm-10">
+            <input type="file" accept=".jpg, .jpeg, .png, .bmp" name="photo" id="inputPhoto"/>
+        </div>
+    </div>
+
+    <div id="files-section">
+        <div class="form-group file-section-item">
+            <label for="inputFile" class="col-sm-2 control-label">Будь-який файл</label>
+            <div class="col-sm-10">
+                <input type="file" name="file" id="inputFile"/>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button id="addbutton" class="btn btn-lg btn-primary col-sm-2 col-sm-offset-5" type="button">Додади файл
+        </button>
+    </div>
+
+    <div class="form-group">
+        <input class="btn btn-lg btn-success col-sm-2 col-sm-offset-5" type="submit" value="Next"/>
+    </div>
+
+    <input name="childId" value="${childId}" style="display: none;"/>
+
+</form>
 <jsp:include page="footer.jsp"/>
+
+<script>
+    $("#addbutton").click(
+        function () {
+            var cloner = $(".file-section-item:first").clone();
+
+            cloner.find('input').val("");
+            $("#files-section").append(cloner);
+
+        });
+
+
+</script>
+
 
 </body>
 </html>

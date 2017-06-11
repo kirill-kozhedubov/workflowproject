@@ -44,4 +44,14 @@ public class ParentRequest {
     public void setParentInfo(String parentInfo) {
         this.parentInfo = parentInfo;
     }
+
+    @Override
+    public String toString() {
+        return "ParentRequest{" +
+                "parentTypeId=" + parentTypeId +
+                ", parentName='" + parentName + '\'' +
+                ", parentDateOfBirth=" + parentDateOfBirth +
+                ", parentInfo='" + parentInfo + '\'' +
+                '}';
+    }
 }

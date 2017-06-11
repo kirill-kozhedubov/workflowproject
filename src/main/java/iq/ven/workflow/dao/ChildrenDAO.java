@@ -1,6 +1,7 @@
 package iq.ven.workflow.dao;
 
 import iq.ven.workflow.models.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
 import java.util.Date;
@@ -42,8 +43,10 @@ public interface ChildrenDAO {
 
     boolean addParentToChild(BigInteger childId, Parent parent);
 
-    boolean addFileToChild(BigInteger childId, ChildFile file);
+    boolean addFileToChild(BigInteger childId, MultipartFile file);
 
     boolean deleteChild(BigInteger childId);
+
+    boolean updateChildsPhoto(BigInteger childId, MultipartFile photo);
 
 }

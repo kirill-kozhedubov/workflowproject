@@ -8,8 +8,6 @@ import iq.ven.workflow.models.impl.ParentImpl;
 import iq.ven.workflow.models.requests.ChildCreationRequest;
 import iq.ven.workflow.models.requests.ParentRequest;
 
-import java.math.BigInteger;
-
 public class ObjectFromRequestBuilder {
 
     public static Child buildObjectFromRequest(ChildCreationRequest childRequest) {
@@ -35,7 +33,6 @@ public class ObjectFromRequestBuilder {
         Child childFull = new ChildImpl.ChildBasicBuilder(childRequest.getBasicFirstName(),
                 childRequest.getBasicLastName(), childRequest.getBasicMiddleName(), childRequest.getBasicDateOfBirth(),
                 childRequest.getPersonalRecordCode(), childRequest.getEnteredDate())
-                .buildPhoto(childRequest.getPhoto())
                 .buildClarifiedChild(clarifiedChildFull)
                 .buildRetiredDate(childRequest.getRetireDate())
                 .buildChildId(null)
@@ -44,8 +41,8 @@ public class ObjectFromRequestBuilder {
     }
 
 
-    public static Parent buildObjectFromRequest(BigInteger childId, ParentRequest parentRequest) {
-        Parent parent = new ParentImpl.ParentBuilder(childId, ParentTypes.getParentTypeById(parentRequest.getParentTypeId()),
+    public static Parent buildObjectFromRequest(ParentRequest parentRequest) {
+        Parent parent = new ParentImpl.ParentBuilder(null, ParentTypes.getParentTypeById(parentRequest.getParentTypeId()),
                 parentRequest.getParentName())
                 .buildParentBirthDate(parentRequest.getParentDateOfBirth())
                 .buildParentInfo(parentRequest.getParentInfo())

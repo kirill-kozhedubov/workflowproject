@@ -1,5 +1,6 @@
 package iq.ven.workflow.services;
 
+import iq.ven.workflow.models.Parent;
 import iq.ven.workflow.models.User;
 
 import java.util.regex.Matcher;
@@ -23,4 +24,7 @@ public class ValidationService {
                 && checkWithRegExp(user.getPassword(), REGEX_PASSWORD);
     }
 
+    public static boolean validate(Parent parent) {
+        return parent.getParentName().length() > 5;
+    }
 }

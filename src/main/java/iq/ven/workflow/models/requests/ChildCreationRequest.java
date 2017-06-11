@@ -1,7 +1,6 @@
 package iq.ven.workflow.models.requests;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Date;
 
 public class ChildCreationRequest {
@@ -14,9 +13,6 @@ public class ChildCreationRequest {
     private Date basicDateOfBirth;
     private Date enteredDate;
     private Date retireDate;
-
-    //photo
-    private byte[] photo;
 
     //clarified section
     private String clarifiedFirstName;
@@ -98,14 +94,6 @@ public class ChildCreationRequest {
 
     public void setRetireDate(Date retireDate) {
         this.retireDate = retireDate;
-    }
-
-    public byte[] getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
     }
 
     public String getClarifiedFirstName() {
@@ -254,7 +242,6 @@ public class ChildCreationRequest {
                 ", basicDateOfBirth=" + basicDateOfBirth +
                 ", enteredDate=" + enteredDate +
                 ", retireDate=" + retireDate +
-                ", photo=" + Arrays.toString(photo) +
                 ", clarifiedFirstName='" + clarifiedFirstName + '\'' +
                 ", clarifiedLastName='" + clarifiedLastName + '\'' +
                 ", clarifiedMiddleName='" + clarifiedMiddleName + '\'' +
