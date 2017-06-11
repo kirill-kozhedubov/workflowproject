@@ -1,5 +1,6 @@
 package iq.ven.workflow.models.requests;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -22,7 +23,7 @@ public class ChildCreationRequest {
     private String clarifiedLastName;
     private String clarifiedMiddleName;
     private Date clarifiedDateOfBirth;
-    private int district;
+    private BigInteger district;
 
     private String address;
     private String birthPlace;
@@ -32,7 +33,7 @@ public class ChildCreationRequest {
 
     //detention
     private String detentionAddress;
-    private String detentionDate;
+    private Date detentionDate;
     private String detainedBy;
     private String detainedFor;
 
@@ -139,11 +140,11 @@ public class ChildCreationRequest {
         this.clarifiedDateOfBirth = clarifiedDateOfBirth;
     }
 
-    public int getDistrict() {
+    public BigInteger getDistrict() {
         return district;
     }
 
-    public void setDistrict(int district) {
+    public void setDistrict(BigInteger district) {
         this.district = district;
     }
 
@@ -195,11 +196,11 @@ public class ChildCreationRequest {
         this.detentionAddress = detentionAddress;
     }
 
-    public String getDetentionDate() {
+    public Date getDetentionDate() {
         return detentionDate;
     }
 
-    public void setDetentionDate(String detentionDate) {
+    public void setDetentionDate(Date detentionDate) {
         this.detentionDate = detentionDate;
     }
 

@@ -125,7 +125,8 @@ public class ChildrenGenerator {
         String parentInfo = textProducer.latinSentence();
         Date parentBirthDate = dateProducer.randomDateBetweenYearAndNow(1900).toDate();
 
-        Parent parent = new ParentImpl.ParentBuilder(childId, parentType, parentName).buildParentBirthDate(parentBirthDate).buildParentInfo(parentInfo).buildParent();
+        Parent parent = new ParentImpl.ParentBuilder(childId, parentType, parentName)
+                .buildParentBirthDate(parentBirthDate).buildParentInfo(parentInfo).buildParent();
         return parent;
     }
 
