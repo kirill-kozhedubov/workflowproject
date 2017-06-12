@@ -18,8 +18,6 @@
     <link href="<c:url value="/resources/css/custom-styles.css"/>" rel="stylesheet">
     <script src="<c:url value="/resources/js/jquery-3.2.1.min.js"/>"></script>
     <script src="<c:url value="/resources/js/bootstrap.min.js"/>"></script>
-
-
 </head>
 
 <body>
@@ -40,17 +38,9 @@
         <p>Ваш логин: <sec:authentication property="principal.username"/></p>
         <p><a class="btn btn-lg btn-danger" href="<c:url value="/logout" />" role="button">Logout</a></p>
         <p><a class="btn btn-lg btn-default" href="<c:url value="/u/" />" role="button">User dash</a></p>
-        <p><a class="btn btn-lg btn-default" href="<c:url value="/u/download/1" />" role="button">download file 1</a>
-        </p>
         <p><a class="btn btn-lg btn-default" href="<c:url value="/u/file/create" />" role="button">create file</a></p>
-        <p><a class="btn btn-lg btn-default" href="<c:url value="/u/file/share/1" />" role="button">share file 1</a></p>
-        <p><a class="btn btn-lg btn-default" href="<c:url value="/u/download/1" />" role="button">download 1</a></p>
         <p><a class="btn btn-lg btn-default" href="<c:url value="/admin/user/create/" />" role="button">admin create
             user</a></p>
-        <p><a class="btn btn-lg btn-danger" href="<c:url value="/children/" />" role="button">children</a></p>
-        <p><a class="btn btn-lg btn-danger" href="<c:url value="/children/child/1" />" role="button">child 1</a></p>
-        <p><a class="btn btn-lg btn-danger" href="<c:url value="/children/create" />" role="button">create children</a>
-        </p>
 
 
     </div>

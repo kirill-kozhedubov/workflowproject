@@ -6,6 +6,7 @@ import iq.ven.workflow.models.impl.ChildImpl;
 import iq.ven.workflow.models.impl.ClarifiedChildImpl;
 import iq.ven.workflow.models.impl.DetentionImpl;
 import iq.ven.workflow.models.impl.ParentImpl;
+import iq.ven.workflow.models.requests.ChildCreationRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -31,7 +32,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
     public Child saveChildToDB(Child child) {
         try {
             generalTemplate.update(INSERT_BASIC_CHILD, child.getFirstName(), child.getLastName(), child.getMiddleName(),
-                    child.getBirthDate(), child.getPersonalRecordCode(), child.getEntranceDate(), child.getRetiredDate(), child.getPhoto());
+                    child.getBirthDate(), child.getPersonalRecordCode(), child.getEntranceDate(), child.getRetiredDate());
             BigInteger childId = generalTemplate.queryForObject(SELECT_BASIC_CHILD_ID_BY_PERSONAL_RECORD_CODE, BigInteger.class, child.getPersonalRecordCode());
 
             Detention detention = child.getClarifiedInfo().getDetention();
@@ -75,7 +76,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
     @Override
     public Child getChildById(BigInteger childId) {
         try {
-            return generalTemplate.queryForObject(SELECT_CHILD_BY_ID, new Object[]{childId.longValue()}, new ChildrenFullRowMapper());
+            return generalTemplate.queryForObject(SELECT_FULL_CHILD_BY_ID, new Object[]{childId.longValue()}, new ChildrenFullRowMapper());
         } catch (DataAccessException e) {
             LOGGER.error("Error in fetching child by ID " + childId, e);
             return null;
@@ -84,6 +85,20 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             return null;
         }
     }
+
+    @Override
+    public Child getChildByIdCut(BigInteger childId) {
+        try {
+            return generalTemplate.queryForObject(SELECT_CUT_CHILD_BY_ID, new Object[]{childId.longValue()}, new ChildrenCutRowMapper());
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in fetching child by ID cut " + childId, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error in fetching child by ID cut" + childId, e);
+            return null;
+        }
+    }
+
 
     @Override
     public List<Child> getChildrenByFullName(String fullName) {
@@ -264,14 +279,60 @@ public class ChildrenDaoImpl implements ChildrenDAO {
         }
     }
 
+    @Override
+    public boolean deleteParent(BigInteger parentId) {
+        //!TODO delete one parent by id
+        return false;
+    }
+
+    @Override
+    public boolean deleteFile(BigInteger fileId) {
+        //!TODO delete one file by id
+        return false;
+    }
+
+    @Override
+    public boolean updateParentInfo(BigInteger parentId, String info) {
+        //!TODO update parent's Info
+        return false;
+    }
+
+    @Override
+    public byte[] getChildPhotoById(BigInteger id) {
+        try {
+            if (id != null) {
+                return generalTemplate.queryForObject(SELECT_CHILDS_PHOTO, byte[].class, id.longValue());
+            } else {
+                LOGGER.error("Error in adding file to child because of nulls. CHILD:" + id);
+                return null;
+            }
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in adding file to child id:" + id, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error in adding file to child id:" + id, e);
+            return null;
+        }
+
+    }
+
+    @Override
+    public Child updateChild(BigInteger childId, ChildCreationRequest creationRequest) {
+        //!TODO full update on child
+        return null;
+    }
+
+
     private static final String UPDATE_CHILDS_PHOTO = "UPDATE children_basic_info SET photo = ? WHERE child_id = ?";
+    private static final String UPDATE_PARENTS_INFO = "UPDATE parents SET photo = ? WHERE child_id = ?";
+
+    private static final String SELECT_CHILDS_PHOTO = "select photo from children_basic_info where child_id = ?";
 
     private static final String SELECT_ALL_CHILDREN = "SELECT" +
             " basic.child_id child_id," +
             " basic.personal_record_code code," +
             " basic.entrance_date entrance_date," +
             " basic.retire_date retire_date," +
-            " basic.photo photo," +
             " clarified.first_name cfirstn," +
             " clarified.last_name clastn," +
             " clarified.middle_name cmiddlen," +
@@ -281,7 +342,9 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             " FROM children_basic_info basic" +
             " JOIN children_clarified_info clarified ON basic.child_id = clarified.child_id";
 
-    private static final String SELECT_CHILD_BY_ID = "SELECT" +
+    private static final String SELECT_CUT_CHILD_BY_ID = SELECT_ALL_CHILDREN +
+            " WHERE basic.child_id = ?";
+    private static final String SELECT_FULL_CHILD_BY_ID = "SELECT" +
             " basic.child_id child_id," +
             " basic.first_name bfirstn," +
             " basic.last_name blastn," +
@@ -290,7 +353,6 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             " basic.personal_record_code code," +
             " basic.entrance_date entrance_date," +
             " basic.retire_date retire_date," +
-            " basic.photo photo," +
             " clarified.first_name cfirstn," +
             " clarified.last_name clastn," +
             " clarified.middle_name cmiddlen," +
@@ -354,8 +416,8 @@ public class ChildrenDaoImpl implements ChildrenDAO {
 
 
     private static final String INSERT_BASIC_CHILD = "INSERT INTO" +
-            " children_basic_info(first_name, last_name, middle_name, birth_date, personal_record_code, entrance_date, retire_date, photo)" +
-            " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            " children_basic_info(first_name, last_name, middle_name, birth_date, personal_record_code, entrance_date, retire_date)" +
+            " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     private static final String INSERT_CLARIFIED_CHILD = "INSERT INTO children_clarified_info(" +
             " child_id, first_name, last_name, middle_name, birth_date, address, birth_place, occupation, comes_from_city, " +
@@ -378,7 +440,6 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             String personalRecordCode = rs.getString(ChildColumnName.PERSONA_RECORD_CODE.toString());
             Date entranceDate = rs.getDate(ChildColumnName.ENTRANCE_DATE.toString());
             Date retireDate = rs.getDate(ChildColumnName.RETIRE_DATE.toString());
-            byte[] photo = rs.getBytes(ChildColumnName.PHOTO.toString());
             String clarifiedFirstName = rs.getString(ChildColumnName.CLARIFIED_FIRST_NAME.toString());
             String clarifiedLastName = rs.getString(ChildColumnName.CLARIFIED_LAST_NAME.toString());
             String clarifiedMiddleName = rs.getString(ChildColumnName.CLARIFIED_MIDDLE_NAME.toString());
@@ -419,7 +480,6 @@ public class ChildrenDaoImpl implements ChildrenDAO {
                     .buildJudgedOrDetainedInfo(judgedInfo)
                     .buildClarifiedChild();
             Child childFull = new ChildImpl.ChildBasicBuilder(basicFirstName, basicLastName, basicMiddleName, basicBirthDate, personalRecordCode, entranceDate)
-                    .buildPhoto(photo)
                     .buildClarifiedChild(clarifiedChildFull)
                     .buildRetiredDate(retireDate)
                     .buildChildId(childId)
@@ -430,13 +490,11 @@ public class ChildrenDaoImpl implements ChildrenDAO {
 
     private class ChildrenCutRowMapper implements RowMapper<Child> {
         public Child mapRow(ResultSet rs, int i) throws SQLException {
-
             BigInteger childId = rs.getBigDecimal(ChildColumnName.CHILD_ID.toString()).toBigInteger();
             String personalRecordCode = rs.getString(ChildColumnName.PERSONA_RECORD_CODE.toString());
             Date entranceDate = rs.getDate(ChildColumnName.ENTRANCE_DATE.toString());
             Date retireDate = rs.getDate(ChildColumnName.RETIRE_DATE.toString());
             Date clarifiedBirthDate = rs.getDate(ChildColumnName.CLARIFIED_BIRTH_DATE.toString());
-            byte[] photo = rs.getBytes(ChildColumnName.PHOTO.toString());
             String clarifiedFirstName = rs.getString(ChildColumnName.CLARIFIED_FIRST_NAME.toString());
             String clarifiedLastName = rs.getString(ChildColumnName.CLARIFIED_LAST_NAME.toString());
             String clarifiedMiddleName = rs.getString(ChildColumnName.CLARIFIED_MIDDLE_NAME.toString());
@@ -453,9 +511,11 @@ public class ChildrenDaoImpl implements ChildrenDAO {
                     clarifiedBirthDate, personalRecordCode, entranceDate)
                     .buildChildId(childId)
                     .buildRetiredDate(retireDate)
-                    .buildPhoto(photo)
                     .buildClarifiedChild(clarifiedChildCut)
                     .buildChild();
+
+
+
             return childCut;
         }
     }

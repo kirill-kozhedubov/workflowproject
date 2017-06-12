@@ -4,6 +4,7 @@
 </div>
 </div>
 </div>
+</div>
 <!--Footer-->
 
 <div class="container">
@@ -11,10 +12,10 @@
         <div class="page-wrap">
 
         </div>
-        <footer class="site-footer bg-white">
+        <footer class="site-footer bg-footer">
             <div class="col-md-12">
-                <div class="padding-text-footer">Copyright © Вениамин Брайденбегсовкиевичев 2017. All rights reserved.
-                </div>
+            <%--    <div class="padding-text-footer">Copyright © Вениамин Брайденбегсовкиевичев 2017. All rights reserved.
+                </div>--%>
             </div>
             <div class="padding-text-footer">
             </div>

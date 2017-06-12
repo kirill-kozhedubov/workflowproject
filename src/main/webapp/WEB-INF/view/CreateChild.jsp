@@ -24,26 +24,28 @@
 <body>
 <jsp:include page="header.jsp"/>
 <c:url value="/children/save" var="save"/>
-<div class="page-title">Додання особової справи до бази</div>
+<div class="page-title text-center"><h1>Додання особової справи до бази</h1></div>
 <form:form class="form-horizontal" modelAttribute="child" action="${save}" method="post">
 
     <fieldset>
-        <div class="section-title">Основна інформація</div>
+        <div class="section-title text-center"><h3>Основна інформація</h3></div>
 
-        <br>
+
         <c:if test="${errorMessage!=null}">
+            <br>
             <div class="alert alert-danger center-block" style="padding: 5px; width: 600px; text-align: center;"
                  role="alert">
                 <p>${errorMessage}</p>
             </div>
+            <br>
         </c:if>
-        <br>
+
 
         <div class="form-group">
             <label for="inputBasicFirstName" class="col-sm-2 control-label">Ім'я<span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="basicFirstName" type="text" class="form-control" id="inputBasicFirstName"
-                            placeholder="Ім'я" />
+                            placeholder="Ім'я"/>
             </div>
         </div>
         <div class="form-group">
@@ -51,14 +53,14 @@
                     class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="basicLastName" type="text" class="form-control" id="inputBasicLastName"
-                            placeholder="Прізвище" />
+                            placeholder="Прізвище"/>
             </div>
         </div>
         <div class="form-group">
             <label for="inputBasicMiddleName" class="col-sm-2 control-label">По батькові<span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="basicMiddleName" type="text" class="form-control" id="inputBasicMiddleName"
-                            placeholder="По батькові" />
+                            placeholder="По батькові"/>
             </div>
         </div>
         <div class="form-group">
@@ -66,7 +68,7 @@
                 <span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="basicDateOfBirth" type="date" class="form-control" id="inputBasicDateOfBirth"
-                            placeholder="Формат: ДД.ММ.РРРР" />
+                            placeholder="Формат: ДД.ММ.РРРР"/>
             </div>
         </div>
         <div class="form-group">
@@ -74,14 +76,14 @@
                 <span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="personalRecordCode" type="text" class="form-control" id="inputPersonalRecordCode"
-                            placeholder="Номер особистої справи" />
+                            placeholder="Номер особистої справи"/>
             </div>
         </div>
         <div class="form-group">
             <label for="inputEnteredDate" class="col-sm-2 control-label">Поступив<span class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="enteredDate" type="date" class="form-control" id="inputEnteredDate"
-                            placeholder="Формат: ДД.ММ.РРРР" />
+                            placeholder="Формат: ДД.ММ.РРРР"/>
             </div>
         </div>
         <div class="form-group">
@@ -93,8 +95,7 @@
         </div>
 
 
-
-        <div class="section-title">Уточнені відомості</div>
+        <div class="section-title text-center"><h3>Уточнені відомості</h3></div>
 
         <div class="form-group">
             <label for="inputClarifiedFirstName" class="col-sm-2 control-label">Ім'я</label>
@@ -124,8 +125,8 @@
                             placeholder="Формат: ДД.ММ.РРРР"/>
             </div>
         </div>
-        <div class="section-title">Анкета</div>
-        <div class="section-title-little">дитини, влаштованої в КУ "Центр СПРД ОМР Одеської області"</div>
+        <div class="section-title text-center"><h3>Анкета</h3>
+            <h4>дитини, влаштованої в КУ "Центр СПРД ОМР Одеської області"</h4></div>
 
         <div class="form-group">
             <label for="inputDistrict" class="col-sm-2 control-label">Район<span class="red-star">*</span></label>
@@ -172,10 +173,11 @@
             </div>
         </div>
 
-        <div class="section-title-little">Інформація про затримання та доставлення до центру</div>
+        <div class="section-title text-center"><h3>Інформація про затримання та доставлення до центру</h3></div>
 
         <div class="form-group">
-            <label class="col-sm-4 control-label">Коли затриманий і ким доставлений до центра<span class="red-star">*</span></label>
+            <label class="col-sm-4 control-label">Коли затриманий і ким доставлений до центра<span
+                    class="red-star">*</span></label>
             <div class="col-sm-4">
                 <form:input path="detainedBy" type="text" class="form-control"
                             placeholder="Ким доставлений"/>
@@ -187,7 +189,8 @@
         </div>
 
         <div class="form-group">
-            <label for="inputDetentionAddress" class="col-sm-2 control-label">Де затриманий<span class="red-star">*</span></label>
+            <label for="inputDetentionAddress" class="col-sm-2 control-label">Де затриманий<span
+                    class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="detentionAddress" type="text" class="form-control" id="inputDetentionAddress"
                             placeholder="Де затриманий"/>
@@ -202,7 +205,7 @@
             </div>
         </div>
 
-        <div class="section-title-little">Інша інформація</div>
+        <div class="section-title text-center"><h3>Інша інформація</h3></div>
 
         <div class="form-group">
             <label for="inputJudgedOrDetainedInfo" class="col-sm-2 control-label">Затримувався раніше міліцією чи був
@@ -224,19 +227,17 @@
         </div>
 
         <div class="form-group">
-            <label for="inputDutyOfficer" class="col-sm-2 control-label">Черговий з режиму<span class="red-star">*</span></label>
+            <label for="inputDutyOfficer" class="col-sm-2 control-label">Черговий з режиму<span
+                    class="red-star">*</span></label>
             <div class="col-sm-10">
                 <form:input path="dutyOfficer" type="text" class="form-control" id="inputDutyOfficer"
-                            placeholder="Черговий з режиму" />
+                            placeholder="Черговий з режиму"/>
             </div>
         </div>
 
 
-        <div class="control-group">
-            <!-- Button -->
-            <div class="controls">
-                <button type="submit" class="btn btn-success">Додати</button>
-            </div>
+        <div class="form-group">
+            <input class="btn btn-lg btn-success col-sm-2 col-sm-offset-5" type="submit" value="Додати"/>
         </div>
 
     </fieldset>

@@ -23,21 +23,22 @@
 
 <body>
 <jsp:include page="header.jsp"/>
-
+<div class="page-title text-center"><h1>Додання файлів до дитини ${child.fullName} ${child.personalRecordCode}</h1>
+</div>
 <form class="form-horizontal" role="form" method="POST" action="<c:out value="/children/upload-files-post"/>"
       enctype="multipart/form-data">
 
-
+    <div class="section-title text-center"><h5>Фотокартка дитини. Якщо вже є - буде перезаписана.</h5></div>
     <div class="form-group file-section-photo">
-        <label for="inputPhoto" class="col-sm-2 control-label">Фото (якщо вже є - перезаписується)</label>
+        <label for="inputPhoto" class="col-sm-2 control-label">Фото</label>
         <div class="col-sm-10">
             <input type="file" accept=".jpg, .jpeg, .png, .bmp" name="photo" id="inputPhoto"/>
         </div>
     </div>
-
+    <div class="section-title text-center"><h5>Файли дитини.</h5></div>
     <div id="files-section">
         <div class="form-group file-section-item">
-            <label for="inputFile" class="col-sm-2 control-label">Будь-який файл</label>
+            <label for="inputFile" class="col-sm-2 control-label">Файл</label>
             <div class="col-sm-10">
                 <input type="file" name="file" id="inputFile"/>
             </div>
@@ -50,7 +51,7 @@
     </div>
 
     <div class="form-group">
-        <input class="btn btn-lg btn-success col-sm-2 col-sm-offset-5" type="submit" value="Next"/>
+        <input class="btn btn-lg btn-success col-sm-2 col-sm-offset-5" type="submit" value="Завантажити"/>
     </div>
 
     <input name="childId" value="${childId}" style="display: none;"/>

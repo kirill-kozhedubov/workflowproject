@@ -2,3 +2,67 @@
     color: red;
     font-weight: bold;
 }
+
+.section-title {
+    text-decoration: underline;;
+    padding: 20px;
+}
+
+.panel-inform {
+    margin: 15px;
+}
+
+.page-content {
+    box-shadow: 0 0 10px 10px lightblue;
+    padding: 15px;
+}
+
+.photo img {
+    width: 100%;
+    max-width: 200px;
+}
+
+.bg-footer {
+    padding: 30px;
+}
+
+.paragraph {
+    margin-top: 20px;
+    padding-bottom: 10px;
+    border: 1px solid lightblue;
+}
+
+.paragraph-title {
+    text-decoration: underline;
+}
+
+.paragraph-content {
+    padding:10px;
+}
+
+.info-col {
+}
+
+.info-title {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.info-content {
+    margin-top: 5px;
+    font-style: italic;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

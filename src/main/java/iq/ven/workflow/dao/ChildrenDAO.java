@@ -1,6 +1,7 @@
 package iq.ven.workflow.dao;
 
 import iq.ven.workflow.models.*;
+import iq.ven.workflow.models.requests.ChildCreationRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigInteger;
@@ -18,6 +19,7 @@ public interface ChildrenDAO {
 
     Child getChildById(BigInteger childId);
 
+    Child getChildByIdCut(BigInteger childId);
 
     List<Child> getChildrenByFullName(String fullName);
 
@@ -49,4 +51,13 @@ public interface ChildrenDAO {
 
     boolean updateChildsPhoto(BigInteger childId, MultipartFile photo);
 
+    boolean deleteParent(BigInteger parentId);
+
+    boolean deleteFile(BigInteger fileId);
+
+    boolean updateParentInfo(BigInteger parentId, String info);
+
+    byte[] getChildPhotoById(BigInteger id);
+
+    Child updateChild(BigInteger childId, ChildCreationRequest creationRequest);
 }

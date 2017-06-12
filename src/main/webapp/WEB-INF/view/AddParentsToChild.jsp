@@ -24,20 +24,23 @@
 <body>
 <jsp:include page="header.jsp"/>
 <c:url value="/children/add-parents-post" var="save"/>
-<div class="page-title">Додання особової справи до бази</div>
+<div class="page-title text-center"><h1>Додання батьків дитини ${child.fullName} ${child.personalRecordCode} до
+    бази</h1></div>
 <form:form class="form-horizontal" modelAttribute="parents" action="${save}" method="post">
 
     <fieldset>
-        <div class="section-title">Батьки, які будуть додані до бази</div>
+        <div class="section-title text-center"><h3>Батьки, які будуть додані до бази</h3></div>
 
-        <br>
+
         <c:if test="${errorMessage!=null}">
+            <br>
             <div class="alert alert-danger center-block" style="padding: 5px; width: 600px; text-align: center;"
                  role="alert">
                 <p>${errorMessage}</p>
             </div>
+            <br>
         </c:if>
-        <br>
+
 
         <c:forEach begin="0" end="2" varStatus="loop">
             <div class="form-group">
@@ -74,17 +77,14 @@
             </div>
             <form:hidden path="childId" value="${childId}"/>
 
-            <br>
+
             <hr>
-            <br>
+
         </c:forEach>
 
 
-        <div class="control-group">
-            <!-- Button -->
-            <div class="controls">
-                <button type="submit" class="btn btn-success">Додати</button>
-            </div>
+        <div class="form-group">
+            <input class="btn btn-lg btn-success col-sm-2 col-sm-offset-5" type="submit" value="Додати"/>
         </div>
 
 

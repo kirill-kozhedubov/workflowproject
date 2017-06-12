@@ -1,20 +1,15 @@
 package iq.ven.workflow.controllers;
 
-import io.codearte.jfairy.Fairy;
-import io.codearte.jfairy.producer.DateProducer;
-import io.codearte.jfairy.producer.person.Person;
-import io.codearte.jfairy.producer.text.TextProducer;
+import iq.ven.workflow.common.IdList;
 import iq.ven.workflow.dao.ChildrenDAO;
-import iq.ven.workflow.models.Child;
-import iq.ven.workflow.models.Districts;
-import iq.ven.workflow.models.Parent;
-import iq.ven.workflow.models.ParentTypes;
+import iq.ven.workflow.models.*;
 import iq.ven.workflow.models.requests.ChildCreationRequest;
 import iq.ven.workflow.models.requests.ChildrenSearchRequest;
 import iq.ven.workflow.models.requests.ParentRequest;
 import iq.ven.workflow.models.requests.ParentRequestWrapper;
 import iq.ven.workflow.services.ObjectFromRequestBuilder;
 import iq.ven.workflow.services.ValidationService;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -27,10 +22,15 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/children")
@@ -41,19 +41,19 @@ public class ChildrenController {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat(IdList.DATE_FORMAT);
         sdf.setLenient(true);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
     }
 
     @ModelAttribute("child")
     ChildCreationRequest getChildCreationRequest() {
-        Fairy fairy = Fairy.create();
+/*        Fairy fairy = Fairy.create();
         Person person = fairy.person();
         TextProducer textProducer = fairy.textProducer();
-        DateProducer dateProducer = fairy.dateProducer();
+        DateProducer dateProducer = fairy.dateProducer();*/
         ChildCreationRequest childReq = new ChildCreationRequest();
-        childReq.setBasicFirstName(person.getFirstName());
+/*        childReq.setBasicFirstName(person.getFirstName());
         childReq.setBasicLastName(person.getLastName());
         childReq.setBasicMiddleName(person.getMiddleName());
         childReq.setBasicDateOfBirth(person.getDateOfBirth().toDate());
@@ -76,7 +76,7 @@ public class ChildrenController {
         childReq.setDetainedBy(person.getFullName());
         childReq.setJudgedOrDetainedInfo(textProducer.paragraph(3));
         childReq.setNotes(textProducer.paragraph(3));
-        childReq.setDutyOfficer(person.getFullName());
+        childReq.setDutyOfficer(person.getFullName());*/
 
 
         return childReq;
@@ -113,6 +113,8 @@ public class ChildrenController {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/add-parents/{id}", method = RequestMethod.GET)
     public String addParents(@ModelAttribute("parents") ParentRequestWrapper parentRequest, Model model, @PathVariable BigInteger id) {
+        Child child = childrenDAO.getChildByIdCut(id);
+        model.addAttribute("child", child);
         model.addAttribute("parentTypes", Arrays.asList(ParentTypes.values()));
         model.addAttribute("childId", id);
         return "AddParentsToChild";
@@ -136,9 +138,20 @@ public class ChildrenController {
         return "redirect:/children/upload-files/" + parentRequest.getChildId();
     }
 
+    @RequestMapping(value = "/getImage/{id}")
+    public void getUserImage(HttpServletResponse response,
+                             @PathVariable("id") BigInteger id) throws IOException {
+        response.setContentType("image/jpeg");
+        byte[] buffer = childrenDAO.getChildPhotoById(id);
+        InputStream in1 = new ByteArrayInputStream(buffer);
+        IOUtils.copy(in1, response.getOutputStream());
+    }
+
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/upload-files/{id}", method = RequestMethod.GET)
     public String uploadChildrenFiles(Model model, @PathVariable BigInteger id) {
+        Child child = childrenDAO.getChildByIdCut(id);
+        model.addAttribute("child", child);
         model.addAttribute("childId", id);
         return "UploadChildrenFiles";
     }
@@ -148,14 +161,6 @@ public class ChildrenController {
     public String uploadChildrenFilesPost(@RequestParam(value = "photo", required = false) MultipartFile photo,
                                           @RequestParam(value = "file", required = false) MultipartFile[] file,
                                           @RequestParam("childId") BigInteger childId) {
-
-        LOGGER.info("childId " + childId);
-        LOGGER.info("photo " + photo.getOriginalFilename() + "   size:" + photo.getSize());
-        for (MultipartFile multipartFile : file) {
-
-            LOGGER.info("file " + multipartFile.getOriginalFilename() + "   size:" + multipartFile.getSize());
-        }
-
         if (photo.getSize() > 0) {
             childrenDAO.updateChildsPhoto(childId, photo);
         }
@@ -171,8 +176,22 @@ public class ChildrenController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/child/{id}", method = RequestMethod.GET)
-    public String childView(Model model) {
-        return "child";
+    public String childView(Model model, @PathVariable BigInteger id) {
+        try {
+            Child child = childrenDAO.getChildById(id);
+            ClarifiedChild clarifiedChild = child.getClarifiedInfo();
+            Detention detention = clarifiedChild.getDetention();
+            List<Parent> childsParents = childrenDAO.getChildParents(id);
+            model.addAttribute("parents", childsParents);
+            model.addAttribute("child", child);
+            model.addAttribute("clarifiedChild", clarifiedChild);
+            model.addAttribute("detention", detention);
+            return "child";
+        } catch (NullPointerException e) {
+            LOGGER.error("Дитина при показі /child/{id}, яка має ідентіфікатор " + id + " не знайдена.", e);
+            model.addAttribute("errorMessage", "Дитина, яка має ідентіфікатор " + id + " не знайдена.");
+            return "child";
+        }
     }
 
     @Secured("ROLE_ADMIN")

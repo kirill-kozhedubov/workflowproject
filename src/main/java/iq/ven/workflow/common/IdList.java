@@ -1,8 +1,12 @@
 package iq.ven.workflow.common;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
 
 public interface IdList {
+    String DATE_FORMAT = "dd.MM.yyyy";
+    SimpleDateFormat SIMPLE_DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+
     /*  Parent types section  */
     BigInteger MOTHER = BigInteger.valueOf(1L);
     BigInteger FATHER = BigInteger.valueOf(2L);
