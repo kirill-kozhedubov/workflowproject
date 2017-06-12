@@ -23,10 +23,79 @@
 
 <body>
 <jsp:include page="header.jsp"/>
+<c:if test="${errorMessage!=null}">
+    <br>
+    <div class="alert alert-danger center-block" style="padding: 5px; width: 600px; text-align: center;"
+         role="alert">
+        <p>${errorMessage}</p>
+    </div>
+    <br>
+</c:if>
+<form class="form-inline" style="min-width: 100%;" role="form" method="GET" action="<c:out value="/children/"/>">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="form-group text-center">
+                <div class="input-group">
+                    <select class="form-control" id="inputTypes" name="criteria">
+                        <c:forEach items="${criterias}" var="entry">
+                            <option value="${entry.id}">${entry.russianName}</option>
+                        </c:forEach>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <input type="text" name="value" class="form-control" id="inputValue"
+                           placeholder="Треба внести дані пошука">
+                </div>
+                <div class="input-group">
+                    <button aria-label="Left Align" type="submit" class="btn btn-success"> Пошук
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 
-пошук
+<div class="row">
+    <div class="child-list col-md-12">
+        <c:choose>
+            <c:when test="${children != null && children.size() > 0}">
+                <table class="table">
+                    <thread>
+                        <tr>
+                            <th>Фото</th>
+                            <th>Ім'я</th>
+                            <th>Дата народження</th>
+                            <th>Дата надходження</th>
+                        </tr>
+                    </thread>
+                    <tbody>
+                    <c:forEach items="${children}" var="child">
+                        <tr>
+                            <td>
+                                <div class="photo-min col-md-4"><img
+                                        src="/children/getImage/<c:out value="${child.childId}"/>"
+                                        class="img-thumbnail"/>
+                                </div>
+                            </td>
+                            <td><a href="/children/child/<c:out value="${child.childId}"/>"><c:out
+                                    value="${child.fullName}"/></a></td>
+                            <td><c:out value="${child.birthDate.toLocaleString().split(' ')[0]}"/></td>
+                            <td><c:out value="${child.entranceDate.toLocaleString().split(' ')[0]}"/></td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </c:when>
+            <c:otherwise>
+                Інформації немає
+            </c:otherwise>
+        </c:choose>
+    </div>
+</div>
+
 
 <jsp:include page="footer.jsp"/>
+
 
 </body>
 </html>

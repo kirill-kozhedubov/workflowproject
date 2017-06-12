@@ -32,15 +32,18 @@
 </c:if>
 <div class="page-title text-center"><h3>КУ "Центр соіиально - психологічної реабілітації дітей Одеської міської ради
     Одеської області"</h3></div>
+
 <div class="page-title text-center">
     <h1>Особиста справа № ${child.personalRecordCode}</h1>
 
     <div class="photo"><img src="/children/getImage/<c:out value="${child.childId}"/>" name="photo" width="300"
                             height="300" border="0" class="img-thumbnail"/></div>
 </div>
+
 <div class="text-center page-title">
+
     <div class="paragraph">
-        <div class="paragraph-title"><h3>Дані зі слів дитини</h3></div>
+        <div class="paragraph-title text-center"><h3>Дані зі слів дитини</h3></div>
         <div class="paragraph-content">
             <div class="row">
                 <div class="info-col info-title  col-md-2 text-right">Прізвище</div>
@@ -64,7 +67,7 @@
 
 
     <div class="paragraph">
-        <div class="paragraph-title"><h3>Уточнені дані</h3></div>
+        <div class="paragraph-title text-center"><h3>Уточнені дані</h3></div>
         <div class="paragraph-content">
             <div class="row">
                 <div class="info-col info-title  col-md-2 text-right">Прізвище</div>
@@ -90,7 +93,7 @@
     </div>
 
     <div class="paragraph">
-        <div class="paragraph-title"><h3>Коли поступив та вибув</h3></div>
+        <div class="paragraph-title text-center"><h3>Коли поступив та вибув</h3></div>
         <div class="paragraph-content">
             <div class="row">
                 <div class="info-col info-title  col-md-2 text-right">Поступив</div>
@@ -107,7 +110,7 @@
 
 
     <div class="paragraph">
-        <div class="paragraph-title"><h3>Анкета</h3>
+        <div class="paragraph-title text-center"><h3>Анкета</h3>
             <h4>дитини, влаштованої в КУ "Центр СПРД ОМР Одеської області"</h4></div>
         <div class="paragraph-content">
             <div class="row">
@@ -150,7 +153,7 @@
     </div>
 
     <div class="paragraph">
-        <div class="paragraph-title"><h3>Інформація про батьків</h3></div>
+        <div class="paragraph-title text-center"><h3>Інформація про батьків</h3></div>
         <div class="paragraph-content">
             <c:choose>
             <c:when test="${parents != null && parents.size() > 0}">
@@ -190,7 +193,7 @@
     </div>
 
     <div class="paragraph">
-        <div class="paragraph-title"><h3>Коли, де і за що затриманий і ким доставлений до центра</h3></div>
+        <div class="paragraph-title text-center"><h3>Коли, де і за що затриманий і ким доставлений до центра</h3></div>
         <div class="paragraph-content">
             <div class="row">
                 <div class="info-col info-title  col-md-2 text-right">Коли затриманий</div>
@@ -216,7 +219,7 @@
     </div>
 
     <div class="paragraph">
-        <div class="paragraph-title"><h3>Додаткова інформація</h3></div>
+        <div class="paragraph-title text-center"><h3>Додаткова інформація</h3></div>
         <div class="paragraph-content">
             <div class="row">
                 <div class="info-col info-title  col-md-2 text-right">Затримувався лі раніше міліцією, чи був судимий
@@ -237,9 +240,26 @@
         </div>
     </div>
 
+    <div class="paragraph">
+        <div class="paragraph-title text-center"><h3>Файли</h3></div>
+        <div class="paragraph-content">
 
+            <c:forEach items="${childFiles}" var="file">
+                <div class="row">
+                    <div class="info-col info-title  col-md-2 text-right">Файл</div>
+                    <div class="info-col info-content col-md-10 text-justify">
+                        <a href="<c:out value="/children/getFile/${file.fileId}"/>"> <c:out
+                                value="${file.fileName}"/></a>
+                    </div>
+                </div>
+            </c:forEach>
+
+
+        </div>
+
+
+    </div>
 </div>
-
 <jsp:include page="footer.jsp"/>
 
 </body>

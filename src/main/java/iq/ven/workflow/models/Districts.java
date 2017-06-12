@@ -23,6 +23,15 @@ public enum Districts {
         this.dbId = dbId;
     }
 
+    public static Districts getDistrictByName(String russianName) {
+        for (Districts e : Districts.values()) {
+            if (e.russianName.equals(russianName)) {
+                return e;
+            }
+        }
+        return null;// not found
+    }
+
     public static Districts getDistrictById(BigInteger dbId) {
         for (Districts e : Districts.values()) {
             if (e.dbId.equals(dbId)) {

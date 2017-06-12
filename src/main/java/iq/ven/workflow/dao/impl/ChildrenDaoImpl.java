@@ -2,10 +2,7 @@ package iq.ven.workflow.dao.impl;
 
 import iq.ven.workflow.dao.ChildrenDAO;
 import iq.ven.workflow.models.*;
-import iq.ven.workflow.models.impl.ChildImpl;
-import iq.ven.workflow.models.impl.ClarifiedChildImpl;
-import iq.ven.workflow.models.impl.DetentionImpl;
-import iq.ven.workflow.models.impl.ParentImpl;
+import iq.ven.workflow.models.impl.*;
 import iq.ven.workflow.models.requests.ChildCreationRequest;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -182,6 +179,35 @@ public class ChildrenDaoImpl implements ChildrenDAO {
     }
 
     @Override
+    public List<Child> getChildrenByParentName(String parentName) {
+        try {
+            return generalTemplate.query(SELECT_CHILDREN_BY_PARENT_NAME,
+                    new Object[]{parentName}, new ChildrenCutRowMapper());
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in fetching children with parent named " + parentName, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error in fetching children with parent named " + parentName, e);
+            return null;
+        }
+    }
+
+
+    @Override
+    public List<Child> getChildrenByDutyOfficer(String dutyOfficerName) {
+        try {
+            return generalTemplate.query(SELECT_CHILDREN_BY_DUTY_OFFICER,
+                    new Object[]{dutyOfficerName}, new ChildrenCutRowMapper());
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in fetching children with duty officer named " + dutyOfficerName, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error in fetching children with duty officer named " + dutyOfficerName, e);
+            return null;
+        }
+    }
+
+    @Override
     public List<Child> getChildrenEnteredInRangeOfDates(Date after, Date before) {
         try {
             return generalTemplate.query(SELECT_CHILDREN_ENTERED_IN_RANGE_OF_DATES,
@@ -303,17 +329,55 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             if (id != null) {
                 return generalTemplate.queryForObject(SELECT_CHILDS_PHOTO, byte[].class, id.longValue());
             } else {
-                LOGGER.error("Error in adding file to child because of nulls. CHILD:" + id);
+                LOGGER.error("Error in getting photo because of nulls. CHILD:" + id);
                 return null;
             }
         } catch (DataAccessException e) {
-            LOGGER.error("Error in adding file to child id:" + id, e);
+            LOGGER.error("Error in getting photo of child id:" + id, e);
             return null;
         } catch (Exception e) {
-            LOGGER.error("Error in adding file to child id:" + id, e);
+            LOGGER.error("Error in getting photo of child id:" + id, e);
             return null;
         }
 
+    }
+
+    @Override
+    public List<ChildFile> getChildFileList(BigInteger id) {
+        try {
+            if (id != null) {
+                return generalTemplate.query(SELECT_LIST_OF_CHILD_FILES, new Object[]{id.longValue()}, new ChildFileRowMapper());
+            } else {
+                LOGGER.error("Error in getting files because of nulls. CHILD:" + id);
+                return null;
+            }
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in getting files of child id:" + id, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error in getting files of child id:" + id, e);
+            return null;
+        }
+
+
+    }
+
+    @Override
+    public byte[] getChildFileById(BigInteger id) {
+        try {
+            if (id != null) {
+                return generalTemplate.queryForObject(SELECT_CHILDS_FILE, byte[].class, id.longValue());
+            } else {
+                LOGGER.error("Error in getting file to because of nulls. CHILD:" + id);
+                return null;
+            }
+        } catch (DataAccessException e) {
+            LOGGER.error("Error in getting file of child id:" + id, e);
+            return null;
+        } catch (Exception e) {
+            LOGGER.error("Error in getting file of child id:" + id, e);
+            return null;
+        }
     }
 
     @Override
@@ -324,9 +388,14 @@ public class ChildrenDaoImpl implements ChildrenDAO {
 
 
     private static final String UPDATE_CHILDS_PHOTO = "UPDATE children_basic_info SET photo = ? WHERE child_id = ?";
+
     private static final String UPDATE_PARENTS_INFO = "UPDATE parents SET photo = ? WHERE child_id = ?";
 
-    private static final String SELECT_CHILDS_PHOTO = "select photo from children_basic_info where child_id = ?";
+    private static final String SELECT_CHILDS_PHOTO = "SELECT photo FROM children_basic_info WHERE child_id = ?";
+
+    private static final String SELECT_CHILDS_FILE = "SELECT file_blob FROM children_files WHERE file_id = ?";
+    
+    private static final String SELECT_LIST_OF_CHILD_FILES = "SELECT file_id, file_name, child_id FROM children_files WHERE child_id = ?";
 
     private static final String SELECT_ALL_CHILDREN = "SELECT" +
             " basic.child_id child_id," +
@@ -388,7 +457,7 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             " WHERE EXTRACT(YEAR FROM clarified.birth_date) = ?";
 
     private static final String SELECT_CHILDREN_BY_DISTRICT = SELECT_ALL_CHILDREN +
-            " WHERE basic.district_id = ?";
+            " WHERE clarified.district_id = ?";
 
     private static final String SELECT_CHILD_BY_PERSONAL_RECORD_CODE = SELECT_ALL_CHILDREN +
             " WHERE basic.personal_record_code = ?";
@@ -396,6 +465,11 @@ public class ChildrenDaoImpl implements ChildrenDAO {
     private static final String SELECT_CHILDREN_ENTERED_IN_RANGE_OF_DATES = SELECT_ALL_CHILDREN +
             " WHERE basic.entrance_date BETWEEN ? AND ?";
 
+    private static final String SELECT_CHILDREN_BY_PARENT_NAME = SELECT_ALL_CHILDREN +
+            " WHERE  basic.child_id = (SELECT child_id FROM parents WHERE parent_name = ?)";
+
+    private static final String SELECT_CHILDREN_BY_DUTY_OFFICER = SELECT_ALL_CHILDREN +
+            " WHERE clarified.duty_officer = ?";
 
     private static final String SELECT_CHILD_PARENTS = "SELECT " +
             " parent_id, child_id, parent_type_id, parent_name, parent_info, parent_birth_date" +
@@ -433,6 +507,20 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             " AND  detention_why = ?" +
             " AND detention_id > (SELECT MAX(detention_id)-1 FROM detentions)";
 
+
+    private class ChildFileRowMapper implements RowMapper<ChildFile> {
+
+        @Override
+        public ChildFile mapRow(ResultSet rs, int i) throws SQLException {
+
+            BigInteger fileId = rs.getBigDecimal(FileColumnName.FILE_ID.toString()).toBigInteger();
+            BigInteger childId = rs.getBigDecimal(FileColumnName.CHILD_ID.toString()).toBigInteger();
+            String fileName = rs.getString(FileColumnName.FILE_NAME.toString());
+
+            ChildFile childFile = new ChildFileImpl.ChildFileBuilder(fileId, fileName, childId).buildChildFile();
+            return childFile;
+        }
+    }
 
     private class ChildrenFullRowMapper implements RowMapper<Child> {
         public Child mapRow(ResultSet rs, int i) throws SQLException {
@@ -515,7 +603,6 @@ public class ChildrenDaoImpl implements ChildrenDAO {
                     .buildChild();
 
 
-
             return childCut;
         }
     }
@@ -540,6 +627,25 @@ public class ChildrenDaoImpl implements ChildrenDAO {
             return parent;
         }
     }
+
+    private enum FileColumnName {
+        FILE_ID("file_id"),
+        CHILD_ID("child_id"),
+        FILE_NAME("file_name"),
+        FILE_BLOB("file_blob");
+
+        final private String colName;
+
+        FileColumnName(String colName) {
+            this.colName = colName;
+        }
+
+        @Override
+        public String toString() {
+            return colName;
+        }
+    }
+
 
     private enum ChildColumnName {
         CHILD_ID("child_id"),

@@ -63,13 +63,13 @@ public class ChildFileImpl implements ChildFile {
         private String fileName;
         private BigInteger childId;
 
-        public ChildFileBuilder(BigInteger fileId, byte[] file, String fileName, BigInteger childId) {
+        public ChildFileBuilder(BigInteger fileId, String fileName, BigInteger childId) {
             this.fileId = fileId;
             this.fileName = fileName;
             this.childId = childId;
         }
 
-        public ChildFileBuilder addFile(byte[] file) {
+        public ChildFileBuilder buildFile(byte[] file) {
             this.file = file;
             return this;
         }

@@ -41,6 +41,10 @@ public interface ChildrenDAO {
 
     List<Child> getChildrenEnteredInRangeOfDates(Date after, Date before);
 
+    List<Child> getChildrenByParentName(String parentName);
+
+    List<Child> getChildrenByDutyOfficer(String dutyOfficerName);
+
     List<Parent> getChildParents(BigInteger childId);
 
     boolean addParentToChild(BigInteger childId, Parent parent);
@@ -57,7 +61,11 @@ public interface ChildrenDAO {
 
     boolean updateParentInfo(BigInteger parentId, String info);
 
+    List<ChildFile> getChildFileList(BigInteger id);
+
     byte[] getChildPhotoById(BigInteger id);
+
+    byte[] getChildFileById(BigInteger id);
 
     Child updateChild(BigInteger childId, ChildCreationRequest creationRequest);
 }

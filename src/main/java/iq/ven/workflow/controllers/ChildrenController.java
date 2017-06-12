@@ -4,9 +4,10 @@ import iq.ven.workflow.common.IdList;
 import iq.ven.workflow.dao.ChildrenDAO;
 import iq.ven.workflow.models.*;
 import iq.ven.workflow.models.requests.ChildCreationRequest;
-import iq.ven.workflow.models.requests.ChildrenSearchRequest;
 import iq.ven.workflow.models.requests.ParentRequest;
 import iq.ven.workflow.models.requests.ParentRequestWrapper;
+import iq.ven.workflow.models.requests.search.AllChildrenSearcher;
+import iq.ven.workflow.models.requests.search.Searcher;
 import iq.ven.workflow.services.ObjectFromRequestBuilder;
 import iq.ven.workflow.services.ValidationService;
 import org.apache.commons.io.IOUtils;
@@ -133,7 +134,7 @@ public class ChildrenController {
             } else {
                 LOGGER.info("parent not saved " + parentRequestItem);
             }
-            // LOGGER.info("got parent from client " + parent + " parent id " + parentRequest.getChildId());
+
         }
         return "redirect:/children/upload-files/" + parentRequest.getChildId();
     }
@@ -143,6 +144,16 @@ public class ChildrenController {
                              @PathVariable("id") BigInteger id) throws IOException {
         response.setContentType("image/jpeg");
         byte[] buffer = childrenDAO.getChildPhotoById(id);
+        InputStream in1 = new ByteArrayInputStream(buffer);
+        IOUtils.copy(in1, response.getOutputStream());
+    }
+
+    @RequestMapping(value = "/getFile/{id}")
+    public void getChildFile(HttpServletResponse response,
+                             @PathVariable("id") BigInteger id) throws IOException {
+        response.setContentType("application/pdf");
+        //!TODO set file name from db to object and to header then  response.addHeader("Content-Disposition", "attachment; filename="+fileName); url.substring(url.lastIndexOf("."));
+        byte[] buffer = childrenDAO.getChildFileById(id);
         InputStream in1 = new ByteArrayInputStream(buffer);
         IOUtils.copy(in1, response.getOutputStream());
     }
@@ -182,10 +193,12 @@ public class ChildrenController {
             ClarifiedChild clarifiedChild = child.getClarifiedInfo();
             Detention detention = clarifiedChild.getDetention();
             List<Parent> childsParents = childrenDAO.getChildParents(id);
+            List<ChildFile> childFiles = childrenDAO.getChildFileList(id);
             model.addAttribute("parents", childsParents);
             model.addAttribute("child", child);
             model.addAttribute("clarifiedChild", clarifiedChild);
             model.addAttribute("detention", detention);
+            model.addAttribute("childFiles", childFiles);
             return "child";
         } catch (NullPointerException e) {
             LOGGER.error("Дитина при показі /child/{id}, яка має ідентіфікатор " + id + " не знайдена.", e);
@@ -196,7 +209,30 @@ public class ChildrenController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String viewAndSearchChildren(Model model, ChildrenSearchRequest childrenSearchRequest) {
+    public String viewAndSearchChildren(Model model,
+                                        @RequestParam(value = "criteria", required = false) Integer criteriaVal,
+                                        @RequestParam(value = "value", required = false) String value) {
+
+        LOGGER.info("Criteria " + criteriaVal + " value = " + value);
+        List<Child> listOfChildrenFromSearcher;
+        if (criteriaVal != null && criteriaVal <= SearchCriteria.values().length && criteriaVal > 0) {
+            SearchCriteria searchCriteria = SearchCriteria.getSearchCriteriaById(criteriaVal);
+            Searcher searcher = Searcher.getSearcherBySearchCriteria(searchCriteria);
+            listOfChildrenFromSearcher = searcher.search(value, childrenDAO);
+        } else {
+            listOfChildrenFromSearcher = new AllChildrenSearcher().search(value, childrenDAO);
+        }
+/*        if (listOfChildrenFromSearcher != null) {
+            for (Child child : listOfChildrenFromSearcher) {
+                byte[] childsPhoto = childrenDAO.getChildPhotoById(child.getChildId());
+                ((ChildImpl) child).setPhoto(childsPhoto);
+            }
+        }*/
+
+
+        model.addAttribute("criterias", Arrays.asList(SearchCriteria.values()));
+        model.addAttribute("children", listOfChildrenFromSearcher);
+
         return "ViewAndSearchChildren";
     }
 
